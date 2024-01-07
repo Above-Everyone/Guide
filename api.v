@@ -1,0 +1,6 @@
+import src
+
+fn main() 
+{
+
+}
