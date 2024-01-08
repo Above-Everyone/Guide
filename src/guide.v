@@ -37,10 +37,11 @@ pub fn build_guide() Guide
 		*/
 
 		if item_info.len >= 4 {
-			g.item_c++
 			g.items << items.new(item_info)
 		}
 	}
+
+	g.profile_c = s.profile.len
 
 	println("Item database successfully loaded...!\nLoading profile database...!")
 
@@ -51,6 +52,11 @@ pub fn build_guide() Guide
 	} 
 
 	return g
+}
+
+pub fn (mut g Guide) add_new_profile(args ..string) bool
+{
+	g.profiles << profiles.create()
 }
 
 fn (mut g Guide) parse(line string) []string

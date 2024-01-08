@@ -2,6 +2,34 @@ module profiles
 
 import src.items
 import src.utils
+import crypto.bcrypt
+
+/*
+	[@DOC]
+
+	Create a new Profile with 
+*/
+pub fn create(args ...string) Profile
+{
+	if args != 14 { return Profile }
+
+	mut p := Profile{}
+	mut set_info := [p.username, p.password, p.yoworld, p.yoworld_id,
+				p.net_worth, p.discord, p.discord_id, p.facebook, p.facebook_id]
+
+	mut c := 0
+	for arg in set_info
+	{
+		arg = args[c]
+		c++
+	}
+
+	p.invo = []items.Item{}
+	p.fs_list = []FS{}
+	p.wtb_list = []WTB{}
+
+	return p
+}
 
 pub fn new(p_content string) Profile
 {
@@ -39,7 +67,7 @@ pub fn new(p_content string) Profile
 			utils.match_starts_with(line, "discordID:") {
 				if line_arg.len > 1 { p.discord_id = line_arg[1].trim_space().i64() }
 			}
-			utils.match_starts_with(line, "facebook") {
+			utils.match_starts_with(line, "facebook:") {
 				if line_arg.len > 1 { p.facebook = line_arg[1].trim_space() }
 			}
 			utils.match_starts_with(line, "faceookID:") {
@@ -60,6 +88,48 @@ pub fn new(p_content string) Profile
 
 	return p
 }
+
+pub fn (mut p Profile) edit(setting_t Setting_T, new_data string) bool
+{
+	if new_data.len < 1 { return false }
+	match setting_t
+	{
+		.username {
+			p.username = new_data
+		}
+		.password {
+			// Add encryption here
+			p.password = new_data
+		}
+		.yoworld {
+			p.yoworld = new_data
+		}
+		.yoworld_id {
+			p.yoworld_id = new_data
+		}
+		.net_worth {
+			p.net_worth = new_data
+		}
+		.discord {
+			p.discord = new_data
+		}
+		.discord_id {
+			p.discord_id = new_data
+		}
+		.facebook {
+			p.facebook = new_data
+		}
+		.facebook_id {
+			p.facebook_id = new_data
+		}
+		.display_badges, .display_worth, .display_invo, .display_fs, .display_wtb, .display_activity {
+			if new_data == "1" || new_data == "true" {
+				p.display_badges = true
+			}
+		}
+	}
+}
+
 
 pub fn (mut p Profile) parse_invo(content string, line_n int) []items.Item
 {
