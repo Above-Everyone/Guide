@@ -56,7 +56,32 @@ pub fn build_guide() Guide
 
 pub fn (mut g Guide) add_new_profile(args ..string) bool
 {
-	g.profiles << profiles.create()
+	mut c := profiles.create()
+	if c.username == "" { return false }
+
+	g.profiles << c
+	return true
+}
+
+pub fn (mut g Guide) add_to_list(list_t List_T, data string) bool
+{
+	match list_t
+	{
+		.add_fs {
+
+		}
+		.rm_fs {
+
+		}
+		.add_wtb {
+
+		}
+		.rm_wtb {
+
+		} else {}
+	}
+
+	return true
 }
 
 fn (mut g Guide) parse(line string) []string

@@ -52,6 +52,16 @@ pub enum Settings_T
 	display_activity	= 0x0016
 }
 
+pub enum List_T
+{
+	null 		= 0x0101
+	add_fs 		= 0x0102
+	rm_fs 		= 0x0103
+
+	add_wtb 	= 0x0104
+	rm_wtb		= 0x0105
+}
+
 pub struct FS 
 {
 	pub mut:
