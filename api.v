@@ -1,6 +1,0 @@
-import src
-
-fn main() 
-{
-
-}
