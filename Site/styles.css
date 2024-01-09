@@ -76,6 +76,12 @@ img {
     background-color: #0c0d10;
     font-size: 20px;
 }
+
+.item_box {
+    height: 400px;
+    width: 500px;
+    border: solid;
+}
 /*
             Search Results Box & Grid Container
 */

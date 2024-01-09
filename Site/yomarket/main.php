@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 class Item 
 {
 		/*
@@ -89,16 +91,17 @@ class YoMarket
     public function searchItem(string $query, string $ip): Response
     {
         $this->found = array();
+        $new = str_replace(" ", "%20", $query);
         if(strlen($query) < 2) 
             return (new Response(ResponseType::NONE, 0));
 
-        $api_resp = file_get_contents("https://api.yomarket.info/search?q=$query");
+        $api_resp = file_get_contents("http://api.yomarket.info/search?q=$new");
 
         if(!str_starts_with($api_resp, "[") && str_ends_with($api_resp, "]"))
             return (new Response(ResponseType::NONE, 0));
         
         if(!str_contains($api_resp, "\n"))
-            return (new Response(ResponseType::EXACT,  (new Item(explode(",", YoGuide::remove_strings($api_resp, array("'", "]", "[")))))));
+            return (new Response(ResponseType::EXACT,  (new Item(explode(",", YoMarket::remove_strings($api_resp, array("'", "]", "[")))))));
 
         $lines = explode("\n", $api_resp);
 

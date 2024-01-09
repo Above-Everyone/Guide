@@ -14,6 +14,58 @@
     z-index: 99;
 }
 
+/*
+            Search Results Box & Grid Container
+*/
+.result_box {
+    border-style: solid;
+    border-color: #ff00;
+    background-color: #fff;
+}
+.grid-container {
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background-color: #fff;
+    gap:3px;
+}
+.grid-item {
+    background-color: #fff;
+    border-style: groove;
+    border-color: #000;
+    width: 170px;
+    text-align: center;
+}
+.item-name {
+    margin: auto;
+    top: 0%;
+    bottom: 5px;
+    padding-bottom: 25px;
+    background-color: fff;
+    color: #000;
+    height: 30px;
+    width: 100mw;
+}
+/*
+            Buttons And Textboxes
+*/
+.txt-input {
+    font-size: 20px;
+    border-style: solid;
+    border-color: #0c0d10;
+    color: #fff;
+    background-color: rgba(42, 42, 42);
+}
+.btn-input {
+    font-size: 20px;
+    border-style: solid;
+    border-color: #0c0d10;
+    color: #fff;
+    background-color: #0c0d10;
+    font-size: 20px;
+}
+
+
 
 /*** Spinner ***/
 #spinner {

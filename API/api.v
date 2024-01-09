@@ -31,11 +31,24 @@ pub fn (mut api API) search() vweb.Result
 	mut guide := src.build_guide()
 	mut check_item := guide.find_by_name(query)
 
+	print("[ + ] New Search Log => ${query}")
+
 	if check_item.len == 0 {
 		return api.text("[ X ] Error, No items found!")
 	}
 
-	return api.text("${check_item}")
+	if check_item.len == 1 {
+		return api.text("${check_item[0].item2api()}")
+	}
+
+	mut items := ""
+
+	for mut item in check_item
+	{
+		items += "${item.item2api()}\n"
+	}
+
+	return $vweb.html()
 }
 
 ['/auth']

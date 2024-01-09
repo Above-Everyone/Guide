@@ -117,21 +117,25 @@
                     </form>
 
                     <?php
-                        include_once("yomarket/main.php");
+                        ini_set('display_errors', 1);
+                        ini_set('display_startup_errors', 1);
+                        error_reporting(E_ALL);
+                        include_once("main.php");
 
-                        if(array_key_exists("search_item", $_GET))
+                        if(array_key_exists("search_item", $_POST))
                         {
-                            $itemID = $_GET['item_query'];
+                            $itemID = $_POST['item_query'];
                             $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 
-                            if(!isset($_GET['item_query']) || empty($itemID))
+                            if(!isset($_POST['item_query']) || empty($itemID))
                                 die("[ X ] Fill out GET parameters to continue...!");
 
                             $eng = new YoMarket();
-                            $r = $eng->searchItem($itemID);
-
+                            $r = $eng->searchItem($itemID, "");
+                            
                             if($r->type == ResponseType::EXACT)
                             {
+                                // echo '<font color="FF0000">'. $r->result->name. " | ". $r->result->id. " | ". $r->result->price. " | ". $r->result->price. '</font>';
                                 echo '<center><form method="post"><div class="item_box">';
                                 echo '<img width="150" height="150" src="'. $r->result->url. '"/>';
                                 echo '<div style="display: inline-block">';
@@ -149,7 +153,7 @@
                                 echo '</div>';
                                 echo '</div></form></center>';
                             } else {
-                                echo "[ X ] Error, No item was found...!";
+                                echo '<a><font color="FF0000">[ X ] Error, No item was found...!</font></a>';
                             }
                         }
                     ?>
