@@ -1,5 +1,8 @@
 module items 
 
+import os
+import time
+
 pub struct Item
 {
     pub mut:
@@ -122,6 +125,16 @@ pub fn (mut i Item) ywinfo_price_logs() []string
 pub fn (mut i Item) item2str(delm string) string
 {
 	return "[${i.name}${delm}${i.id}${delm}${i.url}${delm}${i.price}${delm}${i.update}${delm}${i.is_tradable}${delm}${i.is_giftable}${delm}${i.in_store}${delm}${i.store_price}${delm}${i.gender}${delm}${i.xp}${delm}${i.category}]"
+}
+
+/*
+	[@DOC]
+
+	Incase, it needs to be saved
+*/
+pub fn (mut i Item) to_db() string
+{
+	return "('${i.name}','${i.id}','${i.url}','${i.price}','${i.update}')"
 }
 
 /*

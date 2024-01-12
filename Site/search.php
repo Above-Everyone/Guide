@@ -136,7 +136,7 @@
                             if($r->type == ResponseType::EXACT)
                             {
                                 // echo '<font color="FF0000">'. $r->result->name. " | ". $r->result->id. " | ". $r->result->price. " | ". $r->result->price. '</font>';
-                                echo '<center><form method="post"><div class="item_box">';
+                                echo '<center><form method="post"><div class="item_box" style="background-color: #191C24;">';
                                 echo '<img width="150" height="150" src="'. $r->result->url. '"/>';
                                 echo '<div style="display: inline-block">';
                                 echo '<p><b>'. $r->result->name. '</b></p>';
@@ -152,6 +152,22 @@
                                 echo '<input type="submit" id="price_btn" name="price_btn" value="Suggest"/>';
                                 echo '</div>';
                                 echo '</div></form></center>';
+                            } else if($r->type == ResponseType::EXTRA)
+                            { 
+                                echo '<div class="result_box">';
+                                echo '<div class="grid-container">';
+                                foreach($r->result as $item)
+                                {
+                                    echo '<div class="grid-item">';
+                                    echo '<p class="item-name" style="font-size: 15px; color: #ff0000">'. $item->name. '</p>';
+                                    echo '<img style="padding-top: 20px;" width="100" height="100" src="'. $item->url. '" />';
+                                    echo '<p style="font-size: 15px;color: #ff0000">#'. $item->id. '</p>';
+                                    echo '<p style="font-size: 15px;color: #ff0000">Price: '. $item->price. '</p>';
+                                    echo '<p style="font-size: 15px;color: #ff0000">Last Update: '. $item->update. '</p>';
+                                    echo '</div>';
+                                }
+                                echo '</div>';
+                                echo '</div>';
                             } else {
                                 echo '<a><font color="FF0000">[ X ] Error, No item was found...!</font></a>';
                             }

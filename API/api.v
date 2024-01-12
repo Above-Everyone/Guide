@@ -48,7 +48,26 @@ pub fn (mut api API) search() vweb.Result
 		items += "${item.item2api()}\n"
 	}
 
-	return $vweb.html()
+	return api.text("${items}")
+}
+
+['/change']
+pub fn (mut api API) change_price() vweb.Result
+{
+	item_id := api.query['id'] or { "" }
+	new_price := api.query['price'] or { "" }
+
+	
+	mut guide := src.build_guide()
+    mut item := guide.find_by_id(item_id)
+
+    mut check := guide.change_price(mut item, new_price)
+
+	if !check {
+		return api.text("[ X ] Error, Unable to change price for ${item.name}...!")
+	}
+
+	return api.text("[ + ] ${item.name}'s price has been successfully updated to ${item.price}...!")
 }
 
 ['/auth']

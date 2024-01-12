@@ -1,17 +1,36 @@
 module src
 
 import os
+import time
 import src.items
 import src.profiles
 
 pub struct Guide 
 {
 	pub mut:
+		query 		string
 		item_c		int
+		raw_items	[]string
 		items		[]items.Item
 
 		profile_c	int
 		profiles	[]profiles.Profile
+}
+
+pub enum ResultType
+{
+	_none					= 0
+	_exact 					= 1
+	_extra 					= 2
+	_item_failed_to_update	= 3
+	_item_updated			= 4
+}
+
+pub struct Response
+{
+	pub mut:
+		r_type		ResultType
+		results		[]Item
 }
 
 pub fn build_guide() Guide 
@@ -25,8 +44,10 @@ pub fn build_guide() Guide
 		return Guide{}
 	}
 
+	g.raw_items = db
 	println("[ + ] Loading item database...!")
 
+	mut item_c := 0
 	for item in db
 	{
 		item_info := g.parse(item)
@@ -37,7 +58,10 @@ pub fn build_guide() Guide
 		*/
 
 		if item_info.len >= 4 {
-			g.items << items.new(item_info)
+			mut new_itm := items.new(item_info)
+			new_itm.idx = item_c
+			g.items << new_itm
+			item_c++
 		}
 	}
 
@@ -67,15 +91,28 @@ pub fn (mut g Guide) find_profile(username string) profiles.Profile
 	return profiles.Profile{}
 }
 
-pub fn (mut g Guide) find_by_name(query string) []items.Item
+pub fn (mut g Guide) search(query string) Response
+{
+	mut r := Response{r_type: ResultType._none, results: []items.Item{}}
+
+	if query.int() > 0 {
+		find := g.find_by_id()
+
+		if item.name != "" {
+			return Response{r_type: ResultType._exact, results: [item]}
+		}
+	}
+}
+
+pub fn (mut g Guide) find_by_name() []items.Item
 {
 	mut found := []items.Item{}
 
 	for mut item in g.items 
 	{
-		if item.name == query { return [item] }
+		if item.name == g.query { return [item] }
 
-		if item.name.to_lower().contains(query) {
+		if item.name.to_lower().contains(g.query) {
 			found << item
 		}
 	}
@@ -83,10 +120,10 @@ pub fn (mut g Guide) find_by_name(query string) []items.Item
 	return found
 }
 
-pub fn (mut g Guide) advanced_match_name(item_name string, query string) bool 
+pub fn (mut g Guide) advanced_match_name(item_name string) bool 
 {
 	words_in_item_name := item_name.to_lower().split(" ")
-	words_in_search_name := query.to_lower().split(" ")
+	words_in_search_name := g.query.to_lower().split(" ")
 
 	for word in words_in_item_name
 	{
@@ -99,14 +136,31 @@ pub fn (mut g Guide) advanced_match_name(item_name string, query string) bool
 	return false
 }
 
-pub fn (mut g Guide) find_by_id(query string) items.Item
+pub fn (mut g Guide) find_by_id() items.Item
 {
 	for item in g.items
 	{
-		if "${item.id}" == "${query}" { return item }
+		if "${item.id}" == "${g.query}" { return item }
 	}
 
 	return items.Item{}
+}
+
+pub fn (mut g Guide) change_price(mut item items.Item, new_price string) bool 
+{
+	mut db := os.open_file("db/items.txt", "w") or { os.File{} }
+	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
+	item.price = new_price
+	item.update = current_time
+
+	g.raw_items[item.idx] = "('${item.name}','${item.id}','${item.url}','${item.price}','${item.update}')"
+	for line in g.raw_items
+	{
+		db.write("${line}\n".bytes()) or { 0 }
+	}
+
+	db.close()
+	return true
 }
 
 pub fn (mut g Guide) add_new_profile(args ...string) bool
