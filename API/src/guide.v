@@ -30,7 +30,7 @@ pub struct Response
 {
 	pub mut:
 		r_type		ResultType
-		results		[]Item
+		results		[]items.Item
 }
 
 pub fn build_guide() Guide 
@@ -69,13 +69,13 @@ pub fn build_guide() Guide
 
 	println("Item database successfully loaded...!\nLoading profile database...!")
 
-	mut c := 0
-	for user in profile_dir 
-	{
-		if user.contains("example") { continue }
-		g.profiles << profiles.new(os.read_file("db/profiles/${user}") or { "" })
-		c++
-	} 
+	// mut c := 0
+	// for user in profile_dir 
+	// {
+	// 	if user.contains("example") { continue }
+	// 	g.profiles << profiles.new(os.read_file("db/profiles/${user}") or { "" })
+	// 	c++
+	// } 
 
 	return g
 }
@@ -98,10 +98,20 @@ pub fn (mut g Guide) search(query string) Response
 	if query.int() > 0 {
 		find := g.find_by_id()
 
-		if item.name != "" {
-			return Response{r_type: ResultType._exact, results: [item]}
+		if find.name != "" {
+			return Response{r_type: ResultType._exact, results: [find]}
 		}
 	}
+
+	find := g.find_by_name()
+
+	if find.len == 1 {
+		return Response{r_type: ResultType._exact, results: [find[0]]}
+	} else if find.len > 1 {
+		return Response{r_type: ResultType._extra, results: find}
+	}
+
+	return Response{r_type: ResultType._none, results: []items.Item{} }
 }
 
 pub fn (mut g Guide) find_by_name() []items.Item

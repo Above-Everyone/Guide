@@ -1,7 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+// error_reporting(E_ALL);
 class Item 
 {
 		/*
@@ -69,6 +69,7 @@ enum ResponseType
     case EXTRA;
     case ITEM_UPDATED;
     case FAILED_TO_UPDATE;
+    case API_FAILURE;
 
     public static function r2str(ResponseType $r): string 
     {
@@ -91,11 +92,21 @@ class YoMarket
     public function searchItem(string $query, string $ip): Response
     {
         $this->found = array();
-        $new = str_replace(" ", "%20", $query);
+        $new = strtolower(str_replace(" ", "%20", $query));
         if(strlen($query) < 2) 
             return (new Response(ResponseType::NONE, 0));
+        
+        try {
+            $api_resp = file_get_contents("http://api.yomarket.info/search?q=$new&ip=$ip");
+            if(empty($api_resp))
+               throw new Exception("failed to open stream ", 1);
+        } catch (Exception $e) {
+            return (new Response(ResponseType::API_FAILURE, 0));
+        }
 
-        $api_resp = file_get_contents("http://api.yomarket.info/search?q=$new");
+        
+        if(str_contains($api_resp, "[ X ]"))
+            return (new Response(ResponseType::NONE, 0));
 
         if(!str_starts_with($api_resp, "[") && str_ends_with($api_resp, "]"))
             return (new Response(ResponseType::NONE, 0));
@@ -118,6 +129,16 @@ class YoMarket
             return(new Response(ResponseType::EXTRA, $this->found));
 
         return (new Response(ResponseType::NONE, 0));
+    }
+
+    public static function change_price(Item $item, string $new_price, string $ip): Response
+    {
+        $api_res = file_get_contents("https://api.yomarket.info/change?id=$item->id&price=$new_price&ip=$ip");
+        
+        if(str_contains($api_res, "[ X ]"))
+            return (new Response(ResponseType::FAILED_TO_UPDATE, $api_res));
+
+        return (new Response(ResponseType::ITEM_UPDATED, $api_res));
     }
 
     public function getResults(Response $r): array | Item 

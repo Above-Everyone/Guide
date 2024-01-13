@@ -1,6 +1,9 @@
 import vweb
 
+import time
+
 import src
+import src.utils
 
 pub struct API 
 {
@@ -22,18 +25,25 @@ pub fn (mut api API) index() vweb.Result
 pub fn (mut api API) search() vweb.Result
 {
 	query := api.query['q'] or { "" }
-	user_ip := api.ip() 
+	agent := api.query['agent'] or { "NONE" }
+	mut user_ip := api.query['ip'] or { "" }
+
+	if user_ip == "" {
+		user_ip = api.ip()
+	}
 
 	if query == "" {
 		return api.text("[ X ] Error, You must enter an Item name or ID")
 	}
 
 	mut guide := src.build_guide()
-	mut check_item := guide.find_by_name(query)
+	guide.query = query
+	mut check_item := guide.find_by_name()
 
-	print("[ + ] New Search Log => ${query}")
+	println("[ + ] New Search Log => ${query}\nUser-Agent => ${agent}")
 
 	if check_item.len == 0 {
+		println("[ X ] Error, No item was found for ${query}")
 		return api.text("[ X ] Error, No items found!")
 	}
 
@@ -56,10 +66,23 @@ pub fn (mut api API) change_price() vweb.Result
 {
 	item_id := api.query['id'] or { "" }
 	new_price := api.query['price'] or { "" }
+	mut user_ip := api.query['ip'] or { "" }
+
+	if user_ip == "" {
+		user_ip = api.ip()
+	}
+
+	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
+	if !utils.is_manager(user_ip) {
+		println("[ + ] ${current_time} | An unknown user tried change an item price => \n(${user_ip},${item_id},${new_price})...!")
+		return api.text("[ X ] Error, You are not a price manager to use this!")
+	}
 
 	
 	mut guide := src.build_guide()
-    mut item := guide.find_by_id(item_id)
+
+	guide.query = item_id
+    mut item := guide.find_by_id()
 
     mut check := guide.change_price(mut item, new_price)
 

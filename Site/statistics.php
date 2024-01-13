@@ -1,42 +1,42 @@
-<!-- Sale & Revenue Start -->
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-line fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Database Items</p>
-                    <h6 class="mb-0">N/A</h6>
-                </div>
-            </div>
+<div class="row justify-content-center">
+    <div class="col-lg-4 col-md-12">
+        <div class="white-box analytics-info">
+            <h3 class="box-title">Database Items</h3>
+            <ul class="list-inline two-part d-flex align-items-center mb-0">
+                <li>
+                    <div id="sparklinedash"><canvas width="67" height="30"
+                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
+                    </div>
+                </li>
+                <li class="ms-auto"><span class="counter text-success">0</span></li>
+            </ul>
         </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Total Visitors</p>
-                    <h6 class="mb-0">N/A</h6>
-                </div>
-            </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+        <div class="white-box analytics-info">
+            <h3 class="box-title">Total Searches</h3>
+            <ul class="list-inline two-part d-flex align-items-center mb-0">
+                <li>
+                    <div id="sparklinedash2"><canvas width="67" height="30"
+                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
+                    </div>
+                </li>
+                <li class="ms-auto"><span class="counter text-purple">0</span></li>
+            </ul>
         </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Total Searches</p>
-                    <h6 class="mb-0">N/A</h6>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-pie fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Admins</p>
-                    <h6 class="mb-0">N/A</h6>
-                </div>
-            </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+        <div class="white-box analytics-info">
+            <h3 class="box-title">Unique Visitor</h3>
+            <ul class="list-inline two-part d-flex align-items-center mb-0">
+                <li>
+                    <div id="sparklinedash3"><canvas width="67" height="30"
+                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
+                    </div>
+                </li>
+                <li class="ms-auto"><span class="counter text-info">0</span>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
-<!-- Sale & Revenue End -->
