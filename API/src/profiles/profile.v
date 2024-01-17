@@ -2,7 +2,7 @@ module profiles
 
 import src.items
 import src.utils
-import crypto.bcrypt
+// import crypto.bcrypt
 
 /*
 	[@DOC]

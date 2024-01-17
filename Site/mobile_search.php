@@ -327,7 +327,7 @@ table, th, td {
                                         echo '<p class="fit"><b>Gender:</b> '. $r->result->gender. '</p>';
                                         echo '<p class="fit"><b>XP:</b> '. $r->result->xp. '</p>';
                                         echo '<p class="fit"><b>Category:</b> '. $r->result->category. '</p>';
-                                        echo '<div class="form-group mb-4"><div class="col-sm-12"><a href="https://yomarket.info/more_info.php?iid='. $r->result->name. '"><input class="fit btn btn-success" type="submit" id="mobile_price_btn" name="mobile_price_btn" value="More Info"/></a><br /></div></div>';
+                                        echo '<div class="form-group mb-4"><div class="col-sm-12"><a href="https://yomarket.info/more_info.php?iid='. $r->result->id. '"><input class="fit btn btn-success" type="submit" id="mobile_price_btn" name="mobile_price_btn" value="More Info"/></a><br /></div></div>';
                                         echo '</div>';
                                         echo '</div></form></center>';
                                     } else if($r->type == ResponseType::EXTRA)
@@ -342,7 +342,7 @@ table, th, td {
                                             echo '<p style="font-size: 15px;color: #ff0000">#'. $item->id. '</p>';
                                             echo '<p style="font-size: 15px;color: #ff0000">Price: '. $item->price. '</p>';
                                             echo '<p style="font-size: 15px;color: #ff0000">Last Update: '. $item->update. '</p>';
-                                            echo '<div class="form-group mb-4"><div class="col-sm-12"><a href="https://yomarket.info/more_info.php?iid='. $item->name. '"><input class="fit btn btn-success" type="submit" id="mobile_price_btn" name="mobile_price_btn" value="More Info"/></a><br /></div></div>';
+                                            echo '<div class="form-group mb-4"><div class="col-sm-12"><a href="https://yomarket.info/more_info.php?iid='. $item->id. '"><input class="fit btn btn-success" type="submit" id="mobile_price_btn" name="mobile_price_btn" value="More Info"/></a><br /></div></div>';
                                             echo '</div>';
                                         }
                                         echo '</div>';

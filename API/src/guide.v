@@ -69,13 +69,15 @@ pub fn build_guide() Guide
 
 	println("Item database successfully loaded...!\nLoading profile database...!")
 
-	// mut c := 0
-	// for user in profile_dir 
-	// {
-	// 	if user.contains("example") { continue }
-	// 	g.profiles << profiles.new(os.read_file("db/profiles/${user}") or { "" })
-	// 	c++
-	// } 
+	mut c := 0
+	for user in profile_dir 
+	{
+		if user.contains("example") { continue }
+		g.profiles << profiles.new(os.read_file("db/profiles/${user}") or { "" })
+		c++
+	} 
+
+	println("[ + ] Profiles loaded...!")
 
 	return g
 }
@@ -91,14 +93,23 @@ pub fn (mut g Guide) find_profile(username string) profiles.Profile
 	return profiles.Profile{}
 }
 
-pub fn (mut g Guide) search(query string) Response
+pub fn (mut g Guide) search(query string, get_extra_info bool) Response
 {
-	mut r := Response{r_type: ResultType._none, results: []items.Item{}}
+	g.query = query
 
 	if query.int() > 0 {
-		find := g.find_by_id()
+		mut find := g.find_by_id()
 
 		if find.name != "" {
+			if get_extra_info { find.add_extra_info(false) }
+			return Response{r_type: ResultType._exact, results: [find]}
+		}
+
+		find.id = query.int()
+		find.add_extra_info(true)
+
+		if find.name != "" {
+			g.add_to_db(mut find)
 			return Response{r_type: ResultType._exact, results: [find]}
 		}
 	}
@@ -106,12 +117,12 @@ pub fn (mut g Guide) search(query string) Response
 	find := g.find_by_name()
 
 	if find.len == 1 {
-		return Response{r_type: ResultType._exact, results: [find[0]]}
-	} else if find.len > 1 {
+		return Response{r_type: ResultType._exact, results: find}
+	} else if find.len >= 2 {
 		return Response{r_type: ResultType._extra, results: find}
 	}
 
-	return Response{r_type: ResultType._none, results: []items.Item{} }
+	return Response{r_type: ResultType._none, results: []items.Item{}}
 }
 
 pub fn (mut g Guide) find_by_name() []items.Item
@@ -168,6 +179,15 @@ pub fn (mut g Guide) change_price(mut item items.Item, new_price string) bool
 	{
 		db.write("${line}\n".bytes()) or { 0 }
 	}
+
+	db.close()
+	return true
+}
+
+pub fn (mut g Guide) add_to_db(mut item items.Item) bool 
+{
+	mut db := os.open_file("db/items.txt", "a") or { return false }
+	db.write("${item.to_db()}\n".bytes()) or { return false }
 
 	db.close()
 	return true

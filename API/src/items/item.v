@@ -1,7 +1,7 @@
 module items 
 
-import os
-import time
+import net.http
+import x.json2 as jsn
 
 pub struct Item
 {
@@ -31,6 +31,16 @@ pub struct Item
         xp             	string
         category       	string
 
+		yw_info_prices	[]YW_INFO_PRICES
+}
+
+pub struct YW_INFO_PRICES
+{
+	pub mut:
+		price			string
+		approve 		bool
+		approved_by		string
+		timestamp		string
 }
 
 pub struct Prices
@@ -92,9 +102,38 @@ pub fn new(arr []string) Item
 
 	Add more information besides the basics
 */
-pub fn (mut i Item) add_extra_info() bool 
+pub fn (mut i Item) add_extra_info(add_main_info bool) bool 
 {
-	return false
+	results := http.post_form("https://yoworlddb.com/scripts/getItemInfo.php", {"iid": "${i.id}"}) or { http.Response{} }
+
+    if results.body.starts_with("{") == false || results.body.ends_with("}") == false {
+        println("[ X ] (INVALID_JSON) Error, Unable to get item information....!\n\n{results}")
+        return false
+	}
+
+	json_data := (jsn.raw_decode("${results.body}") or { jsn.Any{} }).as_map()
+	response := (jsn.raw_decode("${json_data['response']}") or { jsn.Any{} }).as_map()
+
+	if add_main_info {
+		i.name = (response['item_name'] or { "" }).str()
+		item_id := "${i.id}"
+		i.url = "https://yw-web.yoworld.com/cdn/items/${item_id[0..2]}/${item_id[2..4]}/${item_id}/${item_id}_60_60.gif"
+	}
+
+	i.gender = (response['gender']).str()
+    i.is_tradable = (response['is_tradable']).int()
+    i.is_giftable = (response['can_gift']).int()
+    i.category = (response['category']).str()
+    i.xp = (response['xp']).str()
+
+	if "${response['active_in_store']}" == "1" { i.in_store = true } 
+    else { i.in_store = true }
+
+    if "${response['price_coins']}" != "0" { i.store_price = "${response['price_coins']}c" }
+    else if "${response['price_cash']}" != "0" { i.store_price = "${response['price_cash']}yc" }
+    else { i.store_price = "0" }
+
+	return true
 }
 
 /*
@@ -104,6 +143,7 @@ pub fn (mut i Item) add_extra_info() bool
 */
 pub fn (mut i Item) price_logs() []string 
 {
+	
 	return ['']
 }
 

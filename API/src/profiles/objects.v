@@ -1,7 +1,6 @@
 module profiles
 
 import src.items
-import crypto.bcrypt
 
 pub struct Profile 
 {
@@ -20,12 +19,12 @@ pub struct Profile
 		facebook			string
 		facebook_id			string
 
-		display_badges		bool = false
-		display_worth		bool = false
-		display_invo		bool = false
-		display_fs			bool = false
-		display_wtb			bool = false
-		display_activity	bool = false
+		display_badges		bool
+		display_worth		bool
+		display_invo		bool
+		display_fs			bool
+		display_wtb			bool
+		display_activity	bool
 
 		invo 				[]items.Item
 		fs_list				[]FS

@@ -37,23 +37,22 @@ pub fn (mut api API) search() vweb.Result
 	}
 
 	mut guide := src.build_guide()
-	guide.query = query
-	mut check_item := guide.find_by_name()
+	mut check_item := guide.search(query, false)
 
-	println("[ + ] New Search Log => ${query}\nUser-Agent => ${agent}")
+	println("[ + ] New Search Log => ${query} ${user_ip}\nUser-Agent => ${agent}")
 
-	if check_item.len == 0 {
+	if check_item.results.len == 0 {
 		println("[ X ] Error, No item was found for ${query}")
 		return api.text("[ X ] Error, No items found!")
 	}
 
-	if check_item.len == 1 {
-		return api.text("${check_item[0].item2api()}")
+	if check_item.results.len == 1 {
+		return api.text("${check_item.results[0].item2api()}")
 	}
 
 	mut items := ""
 
-	for mut item in check_item
+	for mut item in check_item.results
 	{
 		items += "${item.item2api()}\n"
 	}
