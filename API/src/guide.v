@@ -2,6 +2,7 @@ module src
 
 import os
 import time
+import src.utils
 import src.items
 import src.profiles
 
@@ -32,6 +33,27 @@ pub struct Response
 		r_type		ResultType
 		results		[]items.Item
 }
+
+pub fn result_t(res_t ResultType) string
+{
+	match res_t
+	{
+		._exact {
+			return "ResultType._exact"
+		}
+		._extra {
+			return "ResultType._extra"
+		}
+		._item_failed_to_update {
+			return "ResultType._item_failed_to_update"
+		}
+		._item_updated {
+			return "ResultType._item_updated"
+		} else {}
+	}
+	return ""
+}
+
 
 pub fn build_guide() Guide 
 {
@@ -65,9 +87,10 @@ pub fn build_guide() Guide
 		}
 	}
 
+	g.item_c = item_c
 	g.profile_c = g.profiles.len
 
-	println("Item database successfully loaded...!\nLoading profile database...!")
+	println("[ + ] Item database successfully loaded...!\n[ + ] Loading profile database...!")
 
 	mut c := 0
 	for user in profile_dir 
@@ -167,21 +190,28 @@ pub fn (mut g Guide) find_by_id() items.Item
 	return items.Item{}
 }
 
-pub fn (mut g Guide) change_price(mut item items.Item, new_price string) bool 
+pub fn (mut g Guide) change_price(mut item items.Item, new_price string, user_ip string) bool 
 {
-	mut db := os.open_file("db/items.txt", "w") or { os.File{} }
 	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
-	item.price = new_price
-	item.update = current_time
+	
+	utils.new_log(utils.App_T._site, utils.Log_T._change, user_ip, "${item.id}", item.price, new_price)
+	g.items[item.idx].price = new_price
+	g.items[item.idx].update = current_time
 
 	g.raw_items[item.idx] = "('${item.name}','${item.id}','${item.url}','${item.price}','${item.update}')"
+
+	return true
+}
+
+pub fn (mut g Guide) save_db() 
+{
+	mut db := os.open_file("db/items.txt", "w") or { os.File{} }
 	for line in g.raw_items
 	{
 		db.write("${line}\n".bytes()) or { 0 }
 	}
 
 	db.close()
-	return true
 }
 
 pub fn (mut g Guide) add_to_db(mut item items.Item) bool 

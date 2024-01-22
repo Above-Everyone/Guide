@@ -23,7 +23,7 @@
 
 [@INVENTORY]
 {
-
+Cupids Bow and Arrow,26295,https://yw-web.yoworld.com/cdn/items/26/29/26295/26295_60_60.gif,400m,2023/09/21-12:21:02
 }
 
 [@WTB]

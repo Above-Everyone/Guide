@@ -1,28 +1,61 @@
+<!--
+=========================================================
+* Soft UI Dashboard - v1.0.7
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
 <!DOCTYPE html>
-<html dir="ltr" lang="en">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords"
-        content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Ample lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Ample admin lite dashboard bootstrap 5 dashboard template">
-    <meta name="description" content="The Official #1 Price Guide For Yoworld Items. Helping the yoworld community prevent scams!">
-    <meta name="robots" content="noindex,nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YoMarket | Item Search (Desktop)</title>
-    <link rel="canonical" href="https://www.wrappixel.com/templates/ample-admin-lite/" />
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="https://yoworld.com/images/icon.ico">
-    <!-- Custom CSS -->
-    <link href="plugins/bower_components/chartist/dist/chartist.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css">
-    <!-- Custom CSS -->
-    <link href="css/style.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <title>YoMarket | Item Search (Desktop)</title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link href="assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <!-- Nepcha Analytics (nepcha.com) -->
+  <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
+  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
 <style>
+    .item-info-box {
+    margin: auto;
+    background-color: #fff;
+    height: 100mh;
+    width: 500px;
+    border: solid;
+}
+.main-item-info {
+    display: inline-block;
+}
+.item_img {
+    margin: auto;
+    left: 0%;
+}
+.extra_info {
+    margin: 0 auto;
+    display: inline-block;
+    text-align: center;
+}
     .txtt-input {
     font-size: 20px;
     margin: auto;
@@ -43,6 +76,7 @@
 
 .item_box {
     background-color: #fff;
+    display: inline-block;
     height: 100mh;
     width: 500px;
     border: solid;
@@ -52,38 +86,35 @@
             Search Results Box & Grid Container
 */
 .result_box {
-    left: 0%;
     color: #fff;
     margin: auto;
     border-style: solid;
-    border-color: #ff00;
-    max-width: 500px;
+    border-color: #fff;
     background-color: #fff;
 }
 .grid-container {
     display: grid;
     background-color: transparent;
-    grid-template-columns: fit-content(300px) fit-content(300px) 2 2fr;
+    /* grid-template-columns: fit-content(300px) fit-content(300px) 6 2fr; */
     /* grid-template-columns: auto auto auto auto; */
+    grid-template-columns: repeat(5, 1fr);
     grid-gap: 5px;
     box-sizing: border-box;
-    height: 100mh;
-    width: 100mw;
     padding: 10px;
 }
 .grid-item {
     color: #fff;
     background-color: #fff;
     border-style: groove;
-    border-color: rgb(12, 11, 11);
-    width: 200px;
+    border-color: #cb0c9f;
     text-align: center;
 }
 .item-name {
     margin: auto;
-    background-color: rgb(12, 11, 11);
+    background-color: #cb0c9f;
     box-sizing: border-box;
     width: 100mw;
+    height: 50px;
 }
 /*
             Buttons And Textboxes
@@ -112,301 +143,117 @@ table, th, td {
 }
 </style>
 
-<body>
-    <!-- ============================================================== -->
-    <!-- Preloader - style you can find in spinners.css -->
-    <!-- ============================================================== -->
-    <div class="preloader">
-        <div class="lds-ripple">
-            <div class="lds-pos"></div>
-            <div class="lds-pos"></div>
-        </div>
-    </div>
-    <!-- ============================================================== -->
-    <!-- Main wrapper - style you can find in pages.scss -->
-    <!-- ============================================================== -->
-    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
-         data-header-position="absolute" data-boxed-layout="full">
-        <!-- ============================================================== -->
-        <!-- Topbar header - style you can find in pages.scss -->
-        <!-- ============================================================== -->
-        <header class="topbar" data-navbarbg="skin5">
-            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
-                <div class="navbar-header" data-logobg="skin6">
+<body class="g-sidenav-show  bg-gray-100">
+  
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+    <?php include_once("nav_bar.php"); ?>
+
+    <div class="container-fluid py-4">
+      <?php include_once("statistics.php"); ?>
+      
+      <div class="col-12 mt-4">
+        <div class="card mb-4">
+          <div class="card-header pb-0 p-3">
+            <h6 class="mb-1">YoMarket</h6>
+            <p class="text-sm">The #1 Price Guide For Yoworld!</p>
+          </div>
+          <div class="card-body p-3">
+                <?php
+                    ini_set('display_errors', 0);
+                    ini_set('display_startup_errors', 0);
+                    // error_reporting(E_ALL);
+                    include_once("yomarket.php");
+                    $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
+                    $agent = str_replace(" ", "_", $_SERVER["HTTP_USER_AGENT"]);
+                    $agent = str_replace(";", "-", $agent);
                     
+                    if(array_key_exists("iid", $_GET))
+                    {
+                        $itemID = $_GET['iid'];
+                        $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 
-                    <a class="navbar-brand" style="background-color: #2f323e;" href="dashboard.html">
-                        <!-- Logo icon -->
-                        <b class="logo-icon">
-                            <!-- Dark Logo icon -->
-                            <h1 style="color: #ff0000"><b>YoMarket</b></h1>
-                        </b>
-                        <!--End Logo icon -->
-                        <!-- Logo text -->
-                        <span class="logo-text">
-                            <!-- dark Logo text -->
-                        </span>
-                    </a>
-                    <!-- ============================================================== -->
-                    <!-- End Logo -->
-                    <!-- ============================================================== -->
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <a class="nav-toggler waves-effect waves-light text-dark d-block d-md-none"
-                        href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
-                    
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-                   
-                    <li class="sidebar-item pt-2">
-                        <a class="sidebar-link waves-effect waves-dark sidebar-link" href="https://discord.gg/Z4kj3xGsTH"
-                            aria-expanded="false">
-                            <span class="hide-menu">Discord Server</span>
-                        </a>
-                    </li>
-                    <!-- ============================================================== -->
-                    <!-- Right side toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav ms-auto d-flex align-items-center">
+                        if(!isset($_GET['iid']) || empty($itemID))
+                            die("[ X ] Fill out GET parameters to continue...!");
 
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
-                        <li class=" in">
-                            <form role="search" class="app-search d-none d-md-block me-3">
-                                <input type="text" placeholder="Search..." class="form-control mt-0">
-                                <a href="" class="active">
-                                    <i class="fa fa-search"></i>
-                                </a>
-                            </form>
-                        </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                        <li>
-                            <a class="profile-pic" href="#">
-                                <img src="https://puu.sh/JYHXC/7f0281542c.png" alt="user-img" width="36"
-                                    class="img-circle"><span class="text-white font-medium">Steave</span></a>
-                        </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <?php include_once("side_bar.php"); ?>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
-        <div class="page-wrapper">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <div class="page-breadcrumb bg-white">
-                <div class="row align-items-center">
-                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Dashboard</h4>
-                    </div>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            
-            <!-- ============================================================== -->
-            <!-- Container fluid  -->
-            <!-- ============================================================== -->
-            <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Three charts -->
-                <!-- ============================================================== -->
-                <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Database Items</h3>
-                            <ul class="list-inline two-part d-flex align-items-center mb-0">
-                                <li>
-                                    <div id="sparklinedash"><canvas width="67" height="30"
-                                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                                    </div>
-                                </li>
-                                <li class="ms-auto"><span class="counter text-success">0</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Total Searches</h3>
-                            <ul class="list-inline two-part d-flex align-items-center mb-0">
-                                <li>
-                                    <div id="sparklinedash2"><canvas width="67" height="30"
-                                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                                    </div>
-                                </li>
-                                <li class="ms-auto"><span class="counter text-purple">0</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Unique Visitor</h3>
-                            <ul class="list-inline two-part d-flex align-items-center mb-0">
-                                <li>
-                                    <div id="sparklinedash3"><canvas width="67" height="30"
-                                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                                    </div>
-                                </li>
-                                <li class="ms-auto"><span class="counter text-info">0</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- PRODUCTS YEARLY SALES -->
-                <!-- ============================================================== -->
-                <div class="row">
-                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                        <div class="white-box">
-                            <h3 class="box-title">Item Search</h3>
+                        $eng = new YoMarket();
+                        $r = $eng->searchItem($itemID, "");
 
-                            <?php
-                                ini_set('display_errors', 1);
-                                ini_set('display_startup_errors', 1);
-                                // error_reporting(E_ALL);
-                                include_once("yomarket.php");
-                                $item = "";
+                        if($r->type == ResponseType::API_FAILURE || $r->type == ResponseType::NONE)
+                        {
+                            echo "<p>Error, Unable to connect to YoMarket's API. Please try again (Try using all lowercase)</p><br /><p>This is a common bug we are working on fixing....!</p>";
+                        } else if($r->type == ResponseType::EXACT)
+                        {
+                            echo '<form method="post"><div class="item-info-box">';
+                            echo '<div style="width: 100px; display: inline-block">';
+                            echo '<img class="item_img" width="150" height="150" src="'. $r->result->url .'"/>';
+                            echo '</div>';
+                            echo '<div class="main-item-info">';
+                            echo '<p>'. $r->result->name.'</p>';
+                            echo '<p>Item ID: '. $r->result->id. '</p>';
+                            echo '<p>Item Price: '. $r->result->price. '</p>';
+                            echo '</div>';
+                            echo '<center><div class="extra_info">';
+                            echo '<p>Item Update: '. $r->result->update .'</p>';
+                            echo '<p>In-Store:  '. $r->result->in_store .'</p>';
+                            echo '<p>In-Store Price: '. $r->result->store_price. '</p>';
+                            echo '<p>Gender: '. $r->result->gender.' </p>';
+                            echo '<p>XP: '. $r->result->xp. '</p>';
+                            echo '<p>Category: '. $r->result->category. '</p>';
+                            echo '<input type="text" id="new_price" name="new_price" placeholder="New Price (Ex: 2m)"/>';
+                            echo '<div class="form-group mb-4"><div class="col-sm-12"><input type="submit" class="fit btn btn-success" id="price_btn" name="price_btn" value="Suggest"/></div></div>';
+                            echo '<br /><br />';
+                            echo '</div>';
+                            echo '</div></form></center>';
+                        } else {
+                            echo "[ X ] Error, No item was found...!";
+                        }
+                    } else {
+                        die("[ X ] No Item ID Provided To Search For Item Information....!");
+                    }
 
-                                if(array_key_exists("iid", $_GET))
-                                {
-                                    $itemID = $_GET['iid'];
-                                    $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
+                    if(array_key_exists("price_btn", $_POST))
+                    {
+                        $itemID = $_GET['iid'];
+                        $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
+                        $n_price = $_POST['new_price'] == "" ? "0": $_POST['new_price'];
 
-                                    if(!isset($_GET['iid']) || empty($itemID))
-                                        die("[ X ] Fill out GET parameters to continue...!");
+                        if(!isset($_GET['iid']) || empty($itemID))
+                            die("[ X ] Fill out GET parameters to continue...!");
+                        
+                        $eng = new YoMarket();
+                        $r = $eng->searchItem($itemID, "");
 
-                                    $eng = new YoMarket();
-                                    $r = $eng->searchItem($itemID, $ip);
-
-                                    if($r->type == ResponseType::EXACT)
-                                    {
-                                        echo '<center><form method="post"><div class="item_box">';
-                                        echo '<img width="150" height="150" src="'. $r->result->url. '"/>';
-                                        echo '<div style="display: inline-block">';
-                                        echo '<p><b>'. $r->result->name. '</b></p>';
-                                        echo '<p><b>Item ID:</b> '. $r->result->id. '</p>';
-                                        echo '<p><b>Item Price:</b> '. $r->result->price. '</p>';
-                                        echo '<p><b>Item Update:</b> '. $r->result->update. '</p>';
-                                        echo '<p><b>In-Store:</b> '. ($r->result->in_store == "0" ? "Yes":"No"). '</p>';
-                                        echo '<p><b>In-Store Price:</b> '. ($r->result->store_price == "" ? "N/A": $r->result->store_price). '</p>';
-                                        echo '<p><b>Gender:</b> '. $r->result->gender. '</p>';
-                                        echo '<p><b>XP:</b> '. $r->result->xp. '</p>';
-                                        echo '<p><b>Category:</b> '. $r->result->category. '</p>';
-                                        echo '<input type="text" id="new_price" name="new_price" placeholder="New Price (Ex: 2m)"/>';
-                                        echo '<input type="submit" id="price_btn" name="price_btn" value="Suggest"/>';
-                                        echo '</div>';
-                                        echo '</div></form></center>';
-                                    } else {
-                                        echo "[ X ] Error, No item was found...!";
-                                    }
-                                } else {
-                                    die("[ X ] No Item ID Provided To Search For Item Information....!");
-                                }
-
-                                if(array_key_exists("price_btn", $_POST))
-                                {
-                                    $itemID = $_GET['iid'];
-                                    $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
-                                    $n_price = $_POST['new_price'] == "" ? "0": $_POST['new_price'];
-
-                                    if(!isset($_GET['iid']) || empty($itemID))
-                                        die("[ X ] Fill out GET parameters to continue...!");
-                                    
-                                    $eng = new YoMarket();
-                                    $r = $eng->searchItem($itemID, $ip);
-
-                                    $change_r = YoMarket::change_price($r->result, $n_price, $ip);
-                                    
-                                    if($change_r->type == ResponseType::ITEM_UPDATED)
-                                    {
-                                        // $format = YoGuide::format_change_log($ip, $itemID, $r->result->price, $n_price);
-                                        // YoGuide::send_post_req((new YoGuide())->CHANGE_LOG_URL, $format);
-                                        echo "<center><p>Item ". $r->result->name. " successfully updated....!</p><center>";
-                                    } else if($change_r->type == ResponseType::FAILED_TO_UPDATE)
-                                    {
-                                        // $format = YoGuide::format_suggestion_log($ip, $itemID, $r->result->price, $n_price);
-                                        // YoGuide::send_post_req((new YoGuide())->SUGGEST_LOG_URL, $format);
-                                        echo "<center><p>Price Suggestion sent to YoGuide Admins....!</p><center>";
-                                    }
-                                }
-
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- RECENT SALES -->
-                <!-- ============================================================== -->
-                
-                <!-- ============================================================== -->
-                <!-- Recent Comments -->
-                <!-- ============================================================== -->
-                
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <footer class="footer text-center"> 2021 © YoMarket Team | <a
-                    href="https://discord.gg/Z4kj3xGsTH">Discord</a>
-            </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
+                        $change_r = $eng->change_price($r->result, $n_price, $ip);
+                        
+                        if($change_r->type == ResponseType::ITEM_UPDATED)
+                        {
+                            // $format = YoGuide::format_change_log($ip, $itemID, $r->result->price, $n_price);
+                            // YoGuide::send_post_req((new YoGuide())->CHANGE_LOG_URL, $format);
+                            echo "<center><p>Item ". $r->result->name. " successfully updated....!</p><center>";
+                        } else if($r->type == ResponseType::FAILED_TO_UPDATE)
+                        {
+                            // $format = YoGuide::format_suggestion_log($ip, $itemID, $r->result->price, $n_price);
+                            // YoGuide::send_post_req((new YoGuide())->SUGGEST_LOG_URL, $format);
+                            YoMarket::suggest_price($r->result, $n_price, $ip);
+                            echo "<center><p>Price Suggestion sent to YoGuide Admins....!</p><center>";
+                        }
+                    }
+                ?>
+          </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
+      </div>
+
+      
+      <?php include_once("footer.php"); ?>
+
     </div>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
-    <script src="plugins/bower_components/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/app-style-switcher.js"></script>
-    <script src="plugins/bower_components/jquery-sparkline/jquery.sparkline.min.js"></script>
-    <!--Wave Effects -->
-    <script src="js/waves.js"></script>
-    <!--Menu sidebar -->
-    <script src="js/sidebarmenu.js"></script>
-    <!--Custom JavaScript -->
-    <script src="js/custom.js"></script>
-    <!--This page JavaScript -->
-    <!--chartis chart-->
-    <script src="plugins/bower_components/chartist/dist/chartist.min.js"></script>
-    <script src="plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-    <script src="js/pages/dashboards/dashboard1.js"></script>
+  </main>
+  
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
 </body>
 
 </html>

@@ -51,6 +51,27 @@ class Item
     }
 }
 
+class price_log
+{
+    public $app_t;
+    public $addy;
+    public $query;
+    public $old_price;
+    public $new_price;
+    public $timestamp;
+    
+    function __construct(array $arr)
+    {
+        if(count($arr) != 6)
+            return;
+
+        $this->app_t = $arr[0]; $this->addy = $arr[1];
+        $this->query = $arr[2]; $this->old_price = $arr[3];
+        $this->new_price = $arr[4]; $this->timestamp = $arr[5];
+    }
+
+}
+
 class Response 
 {
     public $type;
@@ -70,6 +91,7 @@ enum ResponseType
     case ITEM_UPDATED;
     case FAILED_TO_UPDATE;
     case API_FAILURE;
+    case REQ_SUCCESS;
 
     public static function r2str(ResponseType $r): string 
     {
@@ -119,7 +141,7 @@ class YoMarket
         foreach($lines as $line)
         {
             $info = explode(",", YoMarket::remove_strings($line, array("'", "]", "[")));
-            if(count($info) > 5) {
+            if(count($info) >= 5) {
 
                 array_push($this->found, (new Item($info)));
             }
@@ -130,6 +152,46 @@ class YoMarket
 
         return (new Response(ResponseType::NONE, 0));
     }
+    public function price_logs(): Response 
+    {
+        $this->logs = array();
+
+        try {
+            $api_resp = file_get_contents("https://api.yomarket.info/price_logs");
+            if(empty($api_resp))
+               throw new Exception("failed to open stream ", 1);
+        } catch (Exception $e) {
+            return (new Response(ResponseType::API_FAILURE, 0));
+        }
+
+        $lines = explode("\n", $api_resp);
+
+        foreach($lines as $line)
+        {
+            $log_info = explode(",", YoMarket::remove_strings($line, array("'", "]", "[")));
+            if(count($log_info) >= 5) {
+                array_push($this->logs, (new price_log($log_info)));
+            }
+        }
+
+        if(count($this->logs) > 0)
+            return (new Response(ResponseType::REQ_SUCCESS, $this->logs));
+
+        return (new Response(ResponseType::API_FAILURE, 0));
+    }
+
+    public static function stats(): Response 
+    {
+        try {
+            $api_resp = file_get_contents("https://api.yomarket.info/statistics");
+            if(empty($api_resp))
+               throw new Exception("failed to open stream ", 1);
+        } catch (Exception $e) {
+            return (new Response(ResponseType::API_FAILURE, 0));
+        }
+
+        return (new Response(ResponseType::API_FAILURE, $api_resp));
+    }
 
     public static function change_price(Item $item, string $new_price, string $ip): Response
     {
@@ -139,6 +201,22 @@ class YoMarket
             return (new Response(ResponseType::FAILED_TO_UPDATE, $api_res));
 
         return (new Response(ResponseType::ITEM_UPDATED, $api_res));
+    }
+
+    public static function suggest_price(Item $itm, string $new_price, string $ip): bool
+    {
+        try {
+            $api_resp = file_get_contents("https://api.yomarket.info/suggestion?id=$itm->id&price=$price&ip=$ip");
+            if(empty($api_resp))
+               throw new Exception("failed to open stream ", 1);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        if(str_contains($api_resp, "[ + ]"))
+            return true;
+
+        return false;
     }
 
     public function getResults(Response $r): array | Item 

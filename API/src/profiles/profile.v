@@ -132,7 +132,6 @@ pub fn (mut p Profile) edit(setting_t Settings_T, new_data string) bool
 	return true
 }
 
-
 pub fn (mut p Profile) parse_invo(content string, line_n int) []items.Item
 {
 	
@@ -219,6 +218,13 @@ pub fn (mut p Profile) profile2api() string
 	acct_info := "[${p.username},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
 	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
 
+	mut invo := ""
+
+	for mut invo_item in p.invo 
+	{
+		invo += "${invo_item.item2api()}\n"
+	}
+
 	mut fs_list := ""
 
 	for mut fs_item in p.fs_list 
@@ -233,5 +239,5 @@ pub fn (mut p Profile) profile2api() string
 		wtb_list += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.posted_timestamp}\n"
 	}
 
-	return "${acct_info}\n${acct_settings}\n[@FS]${fs_list}\n[@WTB]${wtb_list}"
+	return "${acct_info}\n${acct_settings}\n[@INVENTORY]${invo}\n[@FS]${fs_list}\n[@WTB]${wtb_list}"
 }

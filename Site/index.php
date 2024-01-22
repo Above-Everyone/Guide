@@ -1,279 +1,234 @@
+<!--
+=========================================================
+* Soft UI Dashboard - v1.0.7
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
 <!DOCTYPE html>
-<html dir="ltr" lang="en">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords"
-        content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Ample lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Ample admin lite dashboard bootstrap 5 dashboard template">
-    <meta name="description" content="The Official #1 Price Guide For Yoworld Items. Helping the yoworld community prevent scams!">
-    <meta name="robots" content="noindex,nofollow">
-    <title>YoMarket | Dashboard</title>
-    <link rel="canonical" href="https://www.wrappixel.com/templates/ample-admin-lite/" />
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="https://yoworld.com/images/icon.ico">
-    <!-- Custom CSS -->
-    <link href="plugins/bower_components/chartist/dist/chartist.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css">
-    <!-- Custom CSS -->
-    <link href="css/style.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://yoworld.com/images/icon.ico">
+  <title>YoMarket | Item Search (Desktop)</title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link href="assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <!-- Nepcha Analytics (nepcha.com) -->
+  <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
+  <script defer data-site="https://yomarket.info" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
-<body>
-    <!-- ============================================================== -->
-    <!-- Preloader - style you can find in spinners.css -->
-    <!-- ============================================================== -->
-    <div class="preloader">
-        <div class="lds-ripple">
-            <div class="lds-pos"></div>
-            <div class="lds-pos"></div>
+<style>
+.bg-success {
+    background-color: #7ace4c!important;
+}
+.rounded {
+    border-radius: 2px!important;
+}
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.7em;
+    font-size: 73%;
+    font-weight: 300;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 2px;
+}
+    .txtt-input {
+    font-size: 20px;
+    margin: auto;
+    border-style: solid;
+    border-color: #0c0d10;
+    color: #000;
+    background-color: #fff;
+}
+.btnn-input {
+    font-size: 20px;
+    margin: auto;
+    border-style: solid;
+    border-color: #0c0d10;
+    color: #fff;
+    background-color: #fff;
+    font-size: 20px;
+}
+
+.item_box {
+    background-color: #fff;
+    height: 100mh;
+    width: 500px;
+    border: solid;
+}
+
+/*
+            Search Results Box & Grid Container
+*/
+.result_box {
+    left: 0%;
+    color: #fff;
+    margin: auto;
+    border-style: solid;
+    border-color: #ff00;
+    background-color: #fff;
+}
+.grid-container {
+    display: grid;
+    background-color: transparent;
+    /* grid-template-columns: fit-content(300px) fit-content(300px) 6 2fr; */
+    /* grid-template-columns: auto auto auto auto; */
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 1px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+.grid-item {
+    color: #fff;
+    background-color: #fff;
+    border-style: groove;
+    border-color: rgb(12, 11, 11);
+    text-align: center;
+}
+.item-name {
+    margin: auto;
+    background-color: rgb(12, 11, 11);
+    box-sizing: border-box;
+    width: 100mw;
+    height: 50px;
+}
+
+/*
+            Buttons And Textboxes
+*/
+.txt-input {
+font-size: 20px;
+    border-style: solid;
+    border-color: #fff;
+    color: #fff;
+    background-color: rgba(42, 42, 42);
+}
+.btn-input {
+    font-size: 20px;
+    border-style: solid;
+    border-color: #fff;
+    color: #fff;
+    background-color: #0c0d10;
+    font-size: 20px;
+}
+.fit {
+    
+    box-sizing: border-box;
+}
+table, th, td {
+  border:1px solid black;
+}
+</style>
+
+<body class="g-sidenav-show  bg-gray-100">
+  
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+    <?php include_once("nav_bar.php"); ?>
+
+    <div class="container-fluid py-4">
+      <?php include_once("statistics.php"); ?>
+      
+      <div class="col-12 mt-4">
+        <div class="card mb-4">
+          <div class="card-header pb-0 p-3">
+            <h6 class="mb-1">Dashboard</h6>
+            <p class="text-sm">News and updates!</p>
+          </div>
+
+          <div class="card-body p-3">
+            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+              <div class="avatar me-3">
+                <img src="https://yoworld.com/images/icon.ico" alt="kal" class="border-radius-lg shadow">
+              </div>
+              <div class="d-flex align-items-start flex-column justify-content-center">
+                <h6 class="mb-0 text-sm">Statistics update</h6>
+                <p style="font-size: 15px;">The total search count has be restarted.</a></p>
+                </div>
+              <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="#">Jan 20, 2024</a>
+            <span style="align: center; right: 0;"class="badge bg-success rounded">- YoMarket Owner</span>
+            </li>
+          </div>
+
+          <div class="card-body p-3">
+            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+              <div class="avatar me-3">
+                <img src="https://yoworld.com/images/icon.ico" alt="kal" class="border-radius-lg shadow">
+              </div>
+              <div class="d-flex align-items-start flex-column justify-content-center">
+                <h6 class="mb-0 text-sm">80-90% Of All 08/09 Updated</h6>
+                <p style="font-size: 15px;">Today we took the time to update most 08/09 costumes along with other trending items people usually use with 08/09s. Enjoy!</a></p>
+                </div>
+              <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="#">Jan 18, 2024</a>
+            <span style="align: center; right: 0;"class="badge bg-success rounded">- YoMarket Owner</span>
+            </li>
+          </div>
+
+          <div class="card-body p-3">
+            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+              <div class="avatar me-3">
+                <img src="https://yoworld.com/images/icon.ico" alt="kal" class="border-radius-lg shadow">
+              </div>
+              <div class="d-flex align-items-start flex-column justify-content-center">
+                <h6 class="mb-0 text-sm">Price Managers Needed!</h6>
+                <p style="font-size: 15px;">We are looking for price managers to update items and help keep our yoworld safe from scams or price jackers! Contact us by submiting a ticket request in our discord! <a href="https://discord.gg/9rcuJ97dke">Click Here To Join</a></p>
+                </div>
+              <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="#">Jan 13, 2024</a>
+            <span style="align: center; right: 0;"class="badge bg-success rounded">- YoMarket Owner</span>
+            </li>
+          </div>
+          
+          <div class="card-body p-3">
+            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+              <div class="avatar me-3">
+                <img src="https://yoworld.com/images/icon.ico" alt="kal" class="border-radius-lg shadow">
+              </div>
+              <div class="d-flex align-items-start flex-column justify-content-center">
+                <h6 class="mb-0 text-sm">YoMarket Owner</h6>
+                <p style="font-size: 15px;">Our new price guide YoMarket is now launched for public use!
+If you experience any errors or bug. Please report it via YoMarket's discord</p>
+                </div>
+              <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="#">Jan 12, 2024</a>
+            <span style="align: center; right: 0;"class="badge bg-success rounded">- YoMarket Owner</span>
+            </li>
+          </div>
+
         </div>
+      </div>
+
+      
+      <?php include_once("footer.php"); ?>
+
     </div>
-    <!-- ============================================================== -->
-    <!-- Main wrapper - style you can find in pages.scss -->
-    <!-- ============================================================== -->
-    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
-         data-header-position="absolute" data-boxed-layout="full">
-        <!-- ============================================================== -->
-        <!-- Topbar header - style you can find in pages.scss -->
-        <!-- ============================================================== -->
-        <header class="topbar" data-navbarbg="skin5">
-            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
-                <div class="navbar-header" data-logobg="skin6">
-                    <!-- ============================================================== -->
-                    <!-- Logo -->
-                    <!-- ============================================================== -->
-                    <a class="navbar-brand" style="background-color: #2f323e;" href="dashboard.html">
-                        <!-- Logo icon -->
-                        <b class="logo-icon">
-                            <!-- Dark Logo icon -->
-                            <h1 style="color: #ff0000"><b>YoMarket</b></h1>
-                        </b>
-                        <!--End Logo icon -->
-                        <!-- Logo text -->
-                        <span class="logo-text">
-                            <!-- dark Logo text -->
-                        </span>
-                    </a>
-
-                    
-                    <!-- ============================================================== -->
-                    <!-- End Logo -->
-                    <!-- ============================================================== -->
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <a class="nav-toggler waves-effect waves-light text-dark d-block d-md-none"
-                        href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
-                    
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-                   
-                    <li class="sidebar-item pt-2">
-                        <a class="sidebar-link waves-effect waves-dark sidebar-link" href="https://discord.gg/Z4kj3xGsTH"
-                            aria-expanded="false">
-                            <span class="hide-menu">Discord Server</span>
-                        </a>
-                    </li>
-                    <!-- ============================================================== -->
-                    <!-- Right side toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav ms-auto d-flex align-items-center">
-
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
-                        <li class=" in">
-                            <form role="search" class="app-search d-none d-md-block me-3">
-                                <input type="text" placeholder="Search..." class="form-control mt-0">
-                                <a href="" class="active">
-                                    <i class="fa fa-search"></i>
-                                </a>
-                            </form>
-                        </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                        <li>
-                            <a class="profile-pic" href="#">
-                                <img src="https://puu.sh/JYHXC/7f0281542c.png" alt="user-img" width="36"
-                                    class="img-circle"><span class="text-white font-medium">Steave</span></a>
-                        </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <?php include_once("side_bar.php"); ?>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
-        <div class="page-wrapper">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <div class="page-breadcrumb bg-white">
-                <div class="row align-items-center">
-                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Dashboard</h4>
-                    </div>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            
-            <!-- ============================================================== -->
-            <!-- Container fluid  -->
-            <!-- ============================================================== -->
-            <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Three charts -->
-                <!-- ============================================================== -->
-                <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Database Items</h3>
-                            <ul class="list-inline two-part d-flex align-items-center mb-0">
-                                <li>
-                                    <div id="sparklinedash"><canvas width="67" height="30"
-                                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                                    </div>
-                                </li>
-                                <li class="ms-auto"><span class="counter text-success">0</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Total Searches</h3>
-                            <ul class="list-inline two-part d-flex align-items-center mb-0">
-                                <li>
-                                    <div id="sparklinedash2"><canvas width="67" height="30"
-                                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                                    </div>
-                                </li>
-                                <li class="ms-auto"><span class="counter text-purple">0</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Unique Visitor</h3>
-                            <ul class="list-inline two-part d-flex align-items-center mb-0">
-                                <li>
-                                    <div id="sparklinedash3"><canvas width="67" height="30"
-                                            style="display: inline-block; width: 67px; height: 30px; vertical-align: top;"></canvas>
-                                    </div>
-                                </li>
-                                <li class="ms-auto"><span class="counter text-info">0</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- PRODUCTS YEARLY SALES -->
-                <!-- ============================================================== -->
-                <div class="row">
-                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                        <div class="white-box">
-                            <h3 class="box-title">Dashboard</h3>
-
-                            <div class="d-flex flex-row comment-row p-3 mt-0">
-                                <div class="p-2"><img src="plugins/images/users/varun.jpg" alt="user" width="50" class="rounded-circle"></div>
-                                <div class="comment-text ps-2 ps-md-3 w-100">
-                                    <h5 class="font-medium">Price Managers Needed!</h5>
-                                    <span class="mb-3 d-block">We are looking for price managers to update items and help keep our yoworld safe from scams or price jackers! Contact us by submiting a ticket request in our discord! <a href="https://discord.gg/DTGXu7ndZp">Click Here To Join</a></span>
-                                    <div class="comment-footer d-md-flex align-items-center">
-                                         <span class="badge bg-success rounded">- YoMarket Owner</span>
-                                         
-                                        <div class="text-muted fs-2 ms-auto mt-2 mt-md-0">Jan 13, 2024</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-row comment-row p-3 mt-0">
-                                <div class="p-2"><img src="plugins/images/users/varun.jpg" alt="user" width="50" class="rounded-circle"></div>
-                                <div class="comment-text ps-2 ps-md-3 w-100">
-                                    <h5 class="font-medium">The launch of YoMarket</h5>
-                                    <span class="mb-3 d-block">Our new price guide YoMarket is now launched for public use!</br >If you experience any errors or bug. Please report it via YoMarket's discord <a href="https://discord.gg/DTGXu7ndZp">Click Here To Join</a></span>
-                                    <div class="comment-footer d-md-flex align-items-center">
-                                         <span class="badge bg-primary rounded">- YoMarket Owner</span>
-                                         
-                                        <div class="text-muted fs-2 ms-auto mt-2 mt-md-0">Jan 13, 2024</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- RECENT SALES -->
-                <!-- ============================================================== -->
-                
-                <!-- ============================================================== -->
-                <!-- Recent Comments -->
-                <!-- ============================================================== -->
-                
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <footer class="footer text-center"> 2021 © YoMarket Team | <a
-                    href="https://discord.gg/Z4kj3xGsTH">Discord</a>
-            </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
-    <script src="plugins/bower_components/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/app-style-switcher.js"></script>
-    <script src="plugins/bower_components/jquery-sparkline/jquery.sparkline.min.js"></script>
-    <!--Wave Effects -->
-    <script src="js/waves.js"></script>
-    <!--Menu sidebar -->
-    <script src="js/sidebarmenu.js"></script>
-    <!--Custom JavaScript -->
-    <script src="js/custom.js"></script>
-    <!--This page JavaScript -->
-    <!--chartis chart-->
-    <script src="plugins/bower_components/chartist/dist/chartist.min.js"></script>
-    <script src="plugins/bower_components/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-    <script src="js/pages/dashboards/dashboard1.js"></script>
+  </main>
+  
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
 </body>
 
 </html>
