@@ -88,29 +88,12 @@
                   <h3 class="font-weight-bolder text-info text-gradient">Welcome back</h3>
                   <p class="mb-0">Enter your username and password to sign in</p>
                 </div>
-            <div class="card-body p-3">
-            <form method="post">
-                <div class="mb-3"><input type="text" class="form-control" placeholder="Username" aria-label="Name" aria-describedby="email-addon" id="ym_username" name="ym_username"></div><br />
-                <div class="mb-3"><input type="password" class="form-control" placeholder="Password" aria-label="Name" aria-describedby="email-addon" id="ym_password" name="ym_password"></div><br />
-                <div class="form-group mb-4"><div class="col-sm-12"><input type="submit" class="btn btn-success" style="width: 100mw" id="ym_login" name="ym_login" value="Search"/></div></div>
-            </form>
-
-                  <?php
-                    include_once("market_profiles.php");
-
-                    $ym_user = $_POST['ym_username'] ?? "";
-                    $ym_passwd = $_POST['ym_password'] ?? "";
-                    $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
-                    $agent = str_replace(" ", "_", $_SERVER["HTTP_USER_AGENT"]);
-                    $agent = str_replace(";", "-", $agent);
-
-                    if(array_key_exists("ym_login", $_POST))
-                    {
-                      $auth = Profiles::auth($ym_user, $ym_passwd, $ip);
-                      var_dump($auth);
-                    }
-                  ?>
-
+                <div class="card-body p-3">
+                  <form action="login.inc.php" method="post">
+                      <div class="mb-3"><input type="text" class="form-control" placeholder="Username" aria-label="Name" aria-describedby="email-addon" id="ym_username" name="ym_username"></div><br />
+                      <div class="mb-3"><input type="text" class="form-control" placeholder="Password" aria-label="Name" aria-describedby="email-addon" id="ym_password" name="ym_password"></div><br />
+                      <div class="form-group mb-4"><div class="col-sm-12"><input type="submit" class="btn btn-success" style="width: 100mw" id="ym_login" name="ym_login" value="Search"/></div></div>
+                  </form>
                 </div>
 
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">

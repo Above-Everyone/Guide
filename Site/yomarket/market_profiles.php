@@ -3,9 +3,14 @@
     YOMARKET-PHP-LIB EXAMPLE 
 */
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 class Profile
 {
 		public $username;
+        public $password;
 		
         public $yoworld;
 		public $yoworld_id;
@@ -31,25 +36,43 @@ class Profile
         
         function __construct(array $acc_info_arr, array $profile_displays, array $invo, array $fs, array $wtb)
         {
-            if(count($acc_info_arr) != 8 || count($profile_displays) != 6)
+            if(count($acc_info_arr) < 8 || count($profile_displays) < 6)
                 return;
 
-            $this->username = $acc_info_arr[0]; $this->yoworld = $acc_info_arr[1]; $this->yoworld_id = $acc_info_arr[2];
-            $this->net_worth = $acc_info_arr[3]; $this->badges = $acc_info_arr[4]; $this->discord = $acc_info_arr[5];
-            $this->discord_id = $acc_info_arr[6]; $this->facebook = $acc_info_arr[7]; $this->facebook_id = $acc_info_arr[8];
+            $this->username = $acc_info_arr[0]; $this->password = $acc_info_arr[1]; $this->yoworld = $acc_info_arr[2]; $this->yoworld_id = $acc_info_arr[3];
+            $this->net_worth = $acc_info_arr[4]; $this->badges = $acc_info_arr[5]; $this->discord = $acc_info_arr[6];
+            $this->discord_id = $acc_info_arr[7]; $this->facebook = $acc_info_arr[8]; $this->facebook_id = $acc_info_arr[9] ?? "";
 
             $this->invo = $invo;
             $this->fs_list = $fs;
             $this->wtb_list = $wtb;
         }
+
+        public function retrieve_info(): string
+        {
+            return "$this->username,$this->password,$this->yoworld,$this->yoworld_id,$this->net_worth,$this->badges,$this->discord,$this->discord_id,$this->facebook,$this->facebook_id";
+        }
+        
+        public static function new_profile(array $info): Profile 
+        {
+            $new_p = new Profile(array("", "", "", "", "", "", "", "", ""), array("", "", "", "", "", "", ""), array(), array(), array());
+            if(count($info) < 8)
+                return new Profile(array("", "", "", "", "", "", "", "", ""), array("", "", "", "", "", "", ""), array(), array(), array());
+
+            $new_p->username = $info[0]; $new_p->password = $info[1]; $new_p->yoworld = $info[2]; $new_p->yoworld_id = $info[3];
+            $new_p->net_worth = $info[4]; $new_p->badges = $info[5]; $new_p->discord = $info[6];
+            $new_p->discord_id = $info[7]; $new_p->facebook = $info[8]; $new_p->facebook_id = $info[9] ?? "";
+
+            return $new_p;
+        }
 }
 
 class Profiles
 {
-    public static function auth(string $user, string $pass): Profile
+    public static function auth(string $user, string $pass, string $ip): Profile
     {
         try {
-            $api_resp = file_get_contents("https://api.yomarket.info/auth?username=$user&password=$pass");
+            $api_resp = file_get_contents("https://api.yomarket.info/auth?username=$user&password=$pass&ip=$ip");
             if(empty($api_resp))
                throw new Exception("failed to open stream ", 1);
         } catch (Exception $e) {

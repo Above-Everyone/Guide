@@ -1,7 +1,7 @@
 [@USER_INFROMATION] 
 {
-    username: niggerbob
-    password: testing
+    username: Billy
+    password: niggerbob@1
     yoworld: aE JaCkeR1x
     yoworldID: 44364435
     netWorth: 534.5m

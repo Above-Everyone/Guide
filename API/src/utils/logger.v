@@ -17,6 +17,7 @@ pub enum Log_T
 	_search = 0x670003
 	_change = 0x670004
 	_request = 0x670005
+	_suggestion = 0x670006
 }
 
 pub enum App_T

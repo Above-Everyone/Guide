@@ -19,7 +19,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://yoworld.com/images/icon.ico">
   <title>YoMarket | Item Search (Desktop)</title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -217,7 +217,7 @@ table, th, td {
                             echo '<p style="font-size: 15px;color: #ff0000">Price: '. $item->price. '</p>';
                             echo '<p style="font-size: 15px;color: #ff0000">Last Update: '. $item->update. '</p>';
                             echo '<div class="form-group mb-4"><div class="col-sm-12"><a href="https://yomarket.info/more_info.php?iid='. $item->id. '"><input class="fit btn btn-success" type="submit" id="mobile_price_btn" name="mobile_price_btn" value="More Info"/></a><br /></div></div>';
-                            echo '<div class="form-group mb-4"><div class="col-sm-12"><a class="fit btn btn-success" href="#">Raise Awareness (Price Check)</a></div></div>';
+                                echo '<div class="form-group mb-4"><div class="col-sm-12"><a class="fit btn btn-success" href="#">Request Price Check</a></div></div>';
                             echo '</div>';
                         }
                         echo '</div>';

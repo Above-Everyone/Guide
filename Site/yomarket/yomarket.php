@@ -152,6 +152,19 @@ class YoMarket
 
         return (new Response(ResponseType::NONE, 0));
     }
+
+    public static function all_suggestions(): array
+    {
+        try {
+            $api_resp = file_get_contents("https://api.yomarket.info/all_suggestion");
+            if(empty($api_resp))
+               throw new Exception("failed to open stream ", 1);
+        } catch (Exception $e) {
+            return (new Response(ResponseType::API_FAILURE, 0));
+        }
+        return explode("\n", YoMarket::remove_strings($api_resp, array("'", "[", "]", "(", ")")));
+    }
+
     public function price_logs(): Response 
     {
         $this->logs = array();

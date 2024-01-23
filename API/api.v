@@ -69,8 +69,9 @@ pub fn (mut api API) search() vweb.Result
 			mut random_items := ""
 			mut item_c := 0
 			for mut i in api.guide.items {
-				if item_c == 30 { break }
-				random_items += i.item2api() + "\n"
+				if item_c == 15 { break }
+				num := rand.int_in_range(0, api.guide.items.len) or { 0 }
+				random_items += api.guide.items[num].item2api() + "\n"
 				item_c++
 			}
 			return api.text("${random_items}")
@@ -144,7 +145,12 @@ pub fn (mut api API) change_price() vweb.Result
 pub fn (mut api API) price_logs() vweb.Result
 {
 	changes := os.read_lines("logs/changes.log") or { [] }
-	last := changes[changes.len-30..changes.len-1]
+	total := changes.len
+	mut last := changes.clone()
+	if total > 30 {
+		last_t := changes.len-30
+		last = changes[last_t..total]
+	}
 	return api.text("${last}".replace("['", "").replace("']", "").replace("', '", "\n"))
 }
 

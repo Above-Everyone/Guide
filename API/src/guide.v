@@ -198,7 +198,8 @@ pub fn (mut g Guide) change_price(mut item items.Item, new_price string, user_ip
 	g.items[item.idx].price = new_price
 	g.items[item.idx].update = current_time
 
-	g.raw_items[item.idx] = "('${item.name}','${item.id}','${item.url}','${item.price}','${item.update}')"
+	g.raw_items[item.idx] = "('${item.name}','${item.id}','${item.url}','${new_price}','${current_time}')"
+
 
 	return true
 }

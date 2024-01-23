@@ -215,7 +215,7 @@ pub fn (mut p Profile) profile2str() string
 
 pub fn (mut p Profile) profile2api() string
 {
-	acct_info := "[${p.username},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
+	acct_info := "[${p.username},${p.password},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
 	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
 
 	mut invo := ""

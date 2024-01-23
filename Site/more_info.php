@@ -19,7 +19,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://yoworld.com/images/icon.ico">
   <title>YoMarket | Item Search (Desktop)</title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -45,11 +45,14 @@
     border: solid;
 }
 .main-item-info {
+    margin: 0 auto;
     display: inline-block;
+    text-align: center;
+
 }
 .item_img {
     margin: auto;
-    left: 0%;
+    align: center;
 }
 .extra_info {
     margin: 0 auto;
@@ -185,15 +188,13 @@ table, th, td {
                         } else if($r->type == ResponseType::EXACT)
                         {
                             echo '<form method="post"><div class="item-info-box">';
-                            echo '<div style="width: 100px; display: inline-block">';
+                            echo '<div style="width: 100px;">';
                             echo '<img class="item_img" width="150" height="150" src="'. $r->result->url .'"/>';
                             echo '</div>';
-                            echo '<div class="main-item-info">';
+                            echo '<center><div class="extra_info">';
                             echo '<p>'. $r->result->name.'</p>';
                             echo '<p>Item ID: '. $r->result->id. '</p>';
                             echo '<p>Item Price: '. $r->result->price. '</p>';
-                            echo '</div>';
-                            echo '<center><div class="extra_info">';
                             echo '<p>Item Update: '. $r->result->update .'</p>';
                             echo '<p>In-Store:  '. $r->result->in_store .'</p>';
                             echo '<p>In-Store Price: '. $r->result->store_price. '</p>';
@@ -202,6 +203,7 @@ table, th, td {
                             echo '<p>Category: '. $r->result->category. '</p>';
                             echo '<input type="text" id="new_price" name="new_price" placeholder="New Price (Ex: 2m)"/>';
                             echo '<div class="form-group mb-4"><div class="col-sm-12"><input type="submit" class="fit btn btn-success" id="price_btn" name="price_btn" value="Suggest"/></div></div>';
+                            echo '<div class="form-group mb-4"><div class="col-sm-12"><a class="fit btn btn-success" href="#">Request Price Check</a></div></div>';
                             echo '<br /><br />';
                             echo '</div>';
                             echo '</div></form></center>';

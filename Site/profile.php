@@ -1,7 +1,7 @@
 <?php
 include_once("market_profiles.php");
 
-$check_auth = Profiles::auth("niggerbob", "testing");
+$check_auth = Profiles::auth("niggerbob", "testing", "");
 ?>
 <!DOCTYPE html>
 <html lang="en">
