@@ -40,8 +40,8 @@ class Profile
                 return;
 
             $this->username = $acc_info_arr[0]; $this->password = $acc_info_arr[1]; $this->yoworld = $acc_info_arr[2]; $this->yoworld_id = $acc_info_arr[3];
-            $this->net_worth = $acc_info_arr[4]; $this->badges = $acc_info_arr[5]; $this->discord = $acc_info_arr[6];
-            $this->discord_id = $acc_info_arr[7]; $this->facebook = $acc_info_arr[8]; $this->facebook_id = $acc_info_arr[9] ?? "";
+            $this->net_worth = $acc_info_arr[4]; $this->discord = $acc_info_arr[5]; $this->discord_id = $acc_info_arr[6];
+            $this->facebook = $acc_info_arr[7]; $this->facebook_id = $acc_info_arr[8] ?? "";
 
             $this->invo = $invo;
             $this->fs_list = $fs;
@@ -51,6 +51,13 @@ class Profile
         public function retrieve_info(): string
         {
             return "$this->username,$this->password,$this->yoworld,$this->yoworld_id,$this->net_worth,$this->badges,$this->discord,$this->discord_id,$this->facebook,$this->facebook_id";
+        }
+
+        public function is_FbID(): bool 
+        {
+            if((int)$this->facebook_id > 0)
+                return true;
+            return false;
         }
         
         public static function new_profile(array $info): Profile 

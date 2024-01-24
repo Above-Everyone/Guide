@@ -164,6 +164,7 @@ table, th, td {
 
                         if($r->type == ResponseType::API_FAILURE || $r->type == ResponseType::NONE)
                         {
+                            var_dump($r);
                             echo "<p>Error, Unable to connect to YoMarket's API. Please try again (Try using all lowercase)</p><br /><p>This is a common bug we are working on fixing....!</p>";
                         } else if($r->type == ResponseType::EXACT)
                         {
@@ -204,24 +205,6 @@ table, th, td {
                         } else {
                             echo '<a><font color="FF0000">[ X ] Error, No item was found...!</font></a>';
                         }
-                    } else {
-                        $r = $eng->searchItem("randomized", $ip);
-                        echo '<div class="result_box" style="margin-left: 0px">';
-                        echo '<div class="grid-container">';
-                        foreach($r->result as $item)
-                        {
-                            echo '<div class="grid-item">';
-                            echo '<p class="item-name" style="font-size: 15px;"><b>'. $item->name. '</b></p>';
-                            echo '<img style="padding-top: 20px;" width="100" height="100" src="'. $item->url. '" />';
-                            echo '<p style="font-size: 15px;color: #ff0000">#'. $item->id. '</p>';
-                            echo '<p style="font-size: 15px;color: #ff0000">Price: '. $item->price. '</p>';
-                            echo '<p style="font-size: 15px;color: #ff0000">Last Update: '. $item->update. '</p>';
-                            echo '<div class="form-group mb-4"><div class="col-sm-12"><a href="https://yomarket.info/more_info.php?iid='. $item->id. '"><input class="fit btn btn-success" type="submit" id="mobile_price_btn" name="mobile_price_btn" value="More Info"/></a><br /></div></div>';
-                                echo '<div class="form-group mb-4"><div class="col-sm-12"><a class="fit btn btn-success" href="#">Request Price Check</a></div></div>';
-                            echo '</div>';
-                        }
-                        echo '</div>';
-                        echo '</div>';
                     }
                 ?>
           </div>

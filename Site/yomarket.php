@@ -31,10 +31,7 @@ class Item
 		/*
 			Extra Info
 		*/
-		public $yw_info_price;
-		public $yw_info_update;
-		public $yw_info_approval;
-		public $yw_db_price;
+		public $ywinfo_prices;
 
     function __construct(array $arr)
     {
@@ -45,8 +42,20 @@ class Item
             $this->price = $arr[3]; 
             $this->update = $arr[4];
             $this->is_tradable = $arr[5]; $this->is_giftable = $arr[6]; $this->in_store = $arr[7];
-            $this->store_price = $arr[8]; $this->gender = $arr[9]; $this->xp = $arr[10];
-            $this->category = $arr[11];
+            $this->store_price = $arr[8]; $this->gender = trim($arr[9]); $this->xp = trim($arr[10]);
+            $this->category = trim($arr[11]);
+        }
+    }
+
+    public function parse_prices(string $content) 
+    {
+        $this->yw_db_price = array();
+        $lines = explode("\n", $content);
+
+        foreach($lines as $line) 
+        {
+            if(strlen($line) > 3)
+                array_push($this->yw_db_price, $line);
         }
     }
 }
@@ -130,11 +139,26 @@ class YoMarket
         if(str_contains($api_resp, "[ X ]"))
             return (new Response(ResponseType::NONE, 0));
 
-        if(!str_starts_with($api_resp, "[") && str_ends_with($api_resp, "]"))
-            return (new Response(ResponseType::NONE, 0));
+        // if(!str_starts_with($api_resp, "[") && str_ends_with($api_resp, "]"))
+        //     return (new Response(ResponseType::NONE, 0));
         
         if(!str_contains($api_resp, "\n"))
             return (new Response(ResponseType::EXACT,  (new Item(explode(",", YoMarket::remove_strings($api_resp, array("'", "]", "[")))))));
+
+        
+        if(((int)"26295") > 0 && str_contains($api_resp, "\n"))
+        {
+            $item_info = explode("\n", $api_resp);
+
+            $content = str_replace($item_info[0], "", $api_resp);
+            
+            $gg = explode(",", YoMarket::remove_strings($item_info[0], array("[", "]", "'")));
+            $i = new Item($gg);
+            
+            $i->parse_prices($content);
+
+            return (new Response(ResponseType::EXACT, $i));
+        }
 
         $lines = explode("\n", $api_resp);
 

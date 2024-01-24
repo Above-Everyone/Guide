@@ -37,113 +37,68 @@
 </head>
 
 <style>
-    .item-info-box {
-    margin: auto;
-    background-color: #fff;
-    height: 100mh;
-    width: 500px;
-    border: solid;
-}
-.main-item-info {
-    margin: 0 auto;
-    display: inline-block;
-    text-align: center;
-
-}
-.item_img {
-    margin: auto;
-    align: center;
-}
-.extra_info {
-    margin: 0 auto;
-    display: inline-block;
-    text-align: center;
-}
-    .txtt-input {
-    font-size: 20px;
-    margin: auto;
-    border-style: solid;
-    border-color: #0c0d10;
-    color: #000;
-    background-color: #fff;
-}
-.btnn-input {
-    font-size: 20px;
-    margin: auto;
-    border-style: solid;
-    border-color: #0c0d10;
-    color: #fff;
-    background-color: #fff;
-    font-size: 20px;
-}
-
-.item_box {
-    background-color: #fff;
-    display: inline-block;
-    height: 100mh;
-    width: 500px;
-    border: solid;
-}
-
-/*
-            Search Results Box & Grid Container
-*/
-.result_box {
-    color: #fff;
-    margin: auto;
-    border-style: solid;
-    border-color: #fff;
-    background-color: #fff;
-}
-.grid-container {
-    display: grid;
-    background-color: transparent;
-    /* grid-template-columns: fit-content(300px) fit-content(300px) 6 2fr; */
-    /* grid-template-columns: auto auto auto auto; */
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 5px;
-    box-sizing: border-box;
-    padding: 10px;
-}
-.grid-item {
-    color: #fff;
-    background-color: #fff;
-    border-style: groove;
-    border-color: #cb0c9f;
-    text-align: center;
-}
-.item-name {
-    margin: auto;
-    background-color: #cb0c9f;
-    box-sizing: border-box;
-    width: 100mw;
-    height: 50px;
-}
-/*
-            Buttons And Textboxes
-*/
-.txt-input {
-font-size: 20px;
-    border-style: solid;
-    border-color: #fff;
-    color: #fff;
-    background-color: rgba(42, 42, 42);
-}
-.btn-input {
-    font-size: 20px;
-    border-style: solid;
-    border-color: #fff;
-    color: #fff;
-    background-color: #0c0d10;
-    font-size: 20px;
-}
 .fit {
-    
+    color: #000;
     box-sizing: border-box;
+}
+.fit-price {
+    color: #000;
+    box-sizing: border-box;
+    display: inline-block;
 }
 table, th, td {
   border:1px solid black;
 }
+
+.wrap-box {
+    border-color: #fff;
+    border-style: solid;
+    padding: 50px;
+    margin: 50px;
+    align-items: center;
+}
+.result-box {
+    border-color: #fff;
+    border-style: solid;
+    padding: 50px;
+    margin: 50px;
+    display: flex;
+    width: 100mw;
+    align-items: center;
+}
+.img-box {
+    padding-left: 40px;
+    display: flex;
+    width: 200px;
+    height: 200px;
+    float:right;
+}
+.result-gap {
+    width: 50px;
+    height: 150px;
+}
+.info-box {
+    right: 0%;
+    border-color: #fff;
+    border-style: solid;
+    width: 300px;
+    height: 350px;
+    float:left;
+    text-align: center;
+}
+.log-box {
+    border-color: #000;
+    border-style: solid;
+    padding: 50px;
+    margin: 50px;
+    display: inline-block;
+    align-items: center;
+}
+h1 {
+    font-size: 20px;
+    color: #cb0c9f;
+}
+
 </style>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -184,29 +139,45 @@ table, th, td {
 
                         if($r->type == ResponseType::API_FAILURE || $r->type == ResponseType::NONE)
                         {
+                            var_dump($r);
                             echo "<p>Error, Unable to connect to YoMarket's API. Please try again (Try using all lowercase)</p><br /><p>This is a common bug we are working on fixing....!</p>";
                         } else if($r->type == ResponseType::EXACT)
                         {
-                            echo '<form method="post"><div class="item-info-box">';
-                            echo '<div style="width: 100px;">';
-                            echo '<img class="item_img" width="150" height="150" src="'. $r->result->url .'"/>';
-                            echo '</div>';
-                            echo '<center><div class="extra_info">';
-                            echo '<p>'. $r->result->name.'</p>';
-                            echo '<p>Item ID: '. $r->result->id. '</p>';
-                            echo '<p>Item Price: '. $r->result->price. '</p>';
-                            echo '<p>Item Update: '. $r->result->update .'</p>';
-                            echo '<p>In-Store:  '. $r->result->in_store .'</p>';
-                            echo '<p>In-Store Price: '. $r->result->store_price. '</p>';
-                            echo '<p>Gender: '. $r->result->gender.' </p>';
-                            echo '<p>XP: '. $r->result->xp. '</p>';
-                            echo '<p>Category: '. $r->result->category. '</p>';
-                            echo '<input type="text" id="new_price" name="new_price" placeholder="New Price (Ex: 2m)"/>';
-                            echo '<div class="form-group mb-4"><div class="col-sm-12"><input type="submit" class="fit btn btn-success" id="price_btn" name="price_btn" value="Suggest"/></div></div>';
+                            echo '<center><form method="post"><div class="result-box">';
+                            echo '<div class="img-box">';
+                            echo '<img width="200" height="200" src="'. $r->result->url. '"/>';
+                            echo '</div> ';
+                            echo '<div class="result-gap"></div>';
+                            echo '<div class="info-box">';
+                            echo '<h1>'. $r->result->name.'</h1>';
+                            echo '<p class="fit">ID: '. $r->result->id. '</p>';
+                            echo '<p class="fit">Price: '. $r->result->price. '</p>';
+                            echo '<p class="fit">Update: '. $r->result->update .'</p>';
+                            echo '<p class="fit">In-Store: '. ($r->result->in_store == "" ? $r->result->in_store: "N/A") .'</p>';
+                            echo '<p class="fit">Store Price: '. ($r->result->store_price == "" ? $r->result->store_price: "N/A"). '</p>';
+                            echo '<p class="fit">Gender: '. ($r->result->gender == "" ? $r->result->gender: "N/A"). '</p>';
+                            echo '<p class="fit">XP: '. ($r->result->xp == "" ? $r->result->xp: "N/A"). '</p>';
+                            echo '<p class="fit">Category: '. ($r->result->category == "" ? $r->result->category: "N/A"). '</p>';
+                            echo '<div class="mb-3"><input type="text" class="form-control" placeholder="New Price (Ex: 2m)" aria-label="Name" aria-describedby="email-addon" id="new_price" name="new_price"></div>';
+                            echo '<div class="form-group mb-4"><div class="col-sm-12"><input style="width: 200px;" type="submit" class="fit btn btn-success" id="price_btn" name="price_btn" value="Suggest"/></div></div>';
                             echo '<div class="form-group mb-4"><div class="col-sm-12"><a class="fit btn btn-success" href="#">Request Price Check</a></div></div>';
-                            echo '<br /><br />';
                             echo '</div>';
-                            echo '</div></form></center>';
+                            echo '</div></form>';
+                            echo '</div>';
+                            echo '<br /><br />';
+                            echo '<div style="height: 50px;"></div>';
+                            echo '<div class="log-box">';
+                            echo '<center><h1>Yoworld.Info\'s Price Change History</h1>';
+                            foreach($r->result->yw_db_price as $price) 
+                            {
+                                $info = explode(",", $price);
+                                echo '<div stlye="display: inline-block">';
+                                echo '<p class="fit-price">Price: '. $info[0]. ' | </p>';
+                                echo '<p class="fit-price">Update: '. $info[3]. '</p>';
+                                echo '</div>';
+                            }
+                            echo '</center></div>';
+                            echo '</div></center>';
                         } else {
                             echo "[ X ] Error, No item was found...!";
                         }

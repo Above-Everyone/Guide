@@ -39,7 +39,12 @@ if(!empty($info)) { $profile = Profile::new_profile(explode(",", $info)); }
           if(!empty($info)) {
             echo '<ul class="navbar-nav  justify-content-end">';
             echo '<li class="nav-item d-flex align-items-center">';
-            echo '  <a href="admin_index.php"><input type="submit" class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" value="Suggested Prices (Admin)"/></a>';
+            echo '  <a href="admin_index.php"><input type="submit" class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" value="Suggested Prices"/></a>';
+            echo '</li>';
+            echo '</ul>';
+            echo '<ul class="navbar-nav  justify-content-end">';
+            echo '<li class="nav-item d-flex align-items-center">';
+            echo '  <a href="https://api.yomarket.info/save"><input type="submit" class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" value="Save DB"/></a>';
             echo '</li>';
             echo '</ul>';
           }
