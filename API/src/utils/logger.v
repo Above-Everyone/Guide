@@ -2,6 +2,7 @@ module utils
 
 import os
 import time
+import net.http
 
 pub const (
     search_filepath      = "logs/searches.log"
@@ -47,6 +48,16 @@ pub fn new_log(app_t App_T, log_t Log_T, args ...string)
 		._desktop {
             db.write("('${app}','${args[0]}','${args[1]}','${args[2]}','${args[3]}','${current_time}')\n".bytes()) or { 0 }
 		} else {}
+	}
+
+	mut json_format := os.read_file("json_format.txt") or { 
+		println("Failed")
+		return
+	}
+	json_format = json_format.replace("{YM_APPLICATION_TYPE}", app).replace("{CLIENTS_IP_ADDRESS}", args[0]).replace("{CLIENTS_SEARCH_QUERY}", args[1]).replace("{YM_RESULT_TYPE}", args[2]).replace("{YM_RESULT_COUNT}", args[3]).replace("{CURRENT_TIME}", current_time)
+	http.post_json("https://discordapp.com/api/webhooks/1199621453256081491/cwIygRnaTn9hK9fvdG44O_sNmBqHF-UaNx-al2nklXPFjY2cWjAdvLW0N-Z30OSvcJlE", json_format) or { 
+		println("Failed")
+		return
 	}
 
 	db.close()

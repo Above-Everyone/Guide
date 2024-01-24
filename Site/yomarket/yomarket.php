@@ -4,34 +4,34 @@ ini_set('display_startup_errors', 0);
 // error_reporting(E_ALL);
 class Item 
 {
-		/*
-			General Item Information
-		*/
-		public $name;
-		public $id;
-		public $url;
-		public $price;
-		public $update;
+	/*
+		General Item Information
+	*/
+	public $name;
+	public $id;
+	public $url;
+	public $price;
+	public $update;
 
-		/*
-			Actions you h the ITEM
-		*/
-		public $is_tradable;
-		public $is_giftable;
+	/*
+		Actions you h the ITEM
+	*/
+	public $is_tradable;
+	public $is_giftable;
 
-		/*
-			In-store Inf
-		*/
-		public $in_store;
-		public $store_price;
-		public $gender;
-		public $xp;
-		public $category;
+	/*
+		In-store Inf
+	*/
+	public $in_store;
+	public $store_price;
+	public $gender;
+	public $xp;
+	public $category;
 
-		/*
-			Extra Info
-		*/
-		public $ywinfo_prices;
+	/*
+		Extra Info
+	*/
+	public $ywinfo_prices;
 
     function __construct(array $arr)
     {

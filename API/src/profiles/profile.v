@@ -213,26 +213,55 @@ pub fn (mut p Profile) profile2str() string
    Badges => ${p.display_badges} | Worth => ${p.display_worth} | INVO => ${p.display_invo} | FS => ${p.display_fs} | WTB => ${p.display_wtb} | Activity => ${p.display_activity}"
 }
 
-pub fn (mut p Profile) profile2api() string
+pub fn (mut p Profile) profile2str() string 
 {
-	acct_info := "[${p.username},${p.password},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
+	acct_info := "[${p.username},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
 	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
 
-	mut invo := ""
+	mut invo := "[@INVENTORY]"
 
 	for mut invo_item in p.invo 
 	{
 		invo += "${invo_item.item2api()}\n"
 	}
 
-	mut fs_list := ""
+	mut fs_list := "[@FS]"
 
 	for mut fs_item in p.fs_list 
 	{
 		fs_list += "${fs_item.item.item2api()},${fs_item.fs_price},${fs_item.posted_timestamp}\n"
 	}
 
-	mut wtb_list := ""
+	mut wtb_list := "[@WTB]"
+
+	for mut wtb_item in p.wtb_list 
+	{
+		wtb_list += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.posted_timestamp}\n"
+	}
+
+	return "${acct_info}\n${acct_settings}\n[@INVENTORY]${invo}\n[@FS]${fs_list}\n[@WTB]${wtb_list}"
+}
+
+pub fn (mut p Profile) auth2str() string
+{
+	acct_info := "[${p.username},${p.password},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
+	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
+
+	mut invo := "[@INVENTORY]"
+
+	for mut invo_item in p.invo 
+	{
+		invo += "${invo_item.item2api()}\n"
+	}
+
+	mut fs_list := "[@FS]"
+
+	for mut fs_item in p.fs_list 
+	{
+		fs_list += "${fs_item.item.item2api()},${fs_item.fs_price},${fs_item.posted_timestamp}\n"
+	}
+
+	mut wtb_list := "[@WTB]"
 
 	for mut wtb_item in p.wtb_list 
 	{
