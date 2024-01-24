@@ -152,9 +152,53 @@ pub fn (mut i Item) price_logs() []string
 
 	Retrieve all YW.Info's price changes
 */
-pub fn (mut i Item) ywinfo_price_logs() []string
+pub fn (mut i Item) ywinfo_price_logs()
 {
-	return ['']
+	mut check := http.get_text("https://api.yoworld.info/api/items/${i.id}")
+
+    lines := check.split(",")
+
+	mut start_scraping := false
+    mut price_info := []string{}
+    for line in lines
+    {
+        mut line_arg := line.replace("{", "").replace("}", "").replace("\"", "").replace("[", "").replace("\n", "").split(":")
+		if "staff_item_price_proposal" in line_arg { start_scraping = true }
+
+
+        if line_arg.len >= 2 && start_scraping {
+            match line_arg[0] {
+                "updated_at" {
+                    if price_info.len == 0 && line_arg[1] != "false" { 
+                        price_info << line_arg[1]
+                    }
+                    
+                }
+                "price" {
+                    if price_info.len == 1 && line_arg[1] != "false" { 
+                        price_info << line_arg[1]
+                    }
+                }
+                "approved" {
+                    if price_info.len == 2 {
+                        price_info << line_arg[1]
+                    }
+                }
+                "username" {
+                    if price_info.len == 3 && line_arg[1] != "false" {
+                        price_info << line_arg[1]
+                        i.yw_info_prices << i.parse_ywinfo_prices(price_info)
+                        price_info = []string{}
+                    }
+                } else {}
+            }
+        }
+    }
+}
+
+pub fn (mut i Item) parse_ywinfo_prices(arr []string) YW_INFO_PRICES
+{
+    return YW_INFO_PRICES{price: arr[1], approve: arr[2].bool(), approved_by: arr[3], timestamp: arr[0]}
 }
 
 /*
@@ -165,6 +209,17 @@ pub fn (mut i Item) ywinfo_price_logs() []string
 pub fn (mut i Item) item2str(delm string) string
 {
 	return "[${i.name}${delm}${i.id}${delm}${i.url}${delm}${i.price}${delm}${i.update}${delm}${i.is_tradable}${delm}${i.is_giftable}${delm}${i.in_store}${delm}${i.store_price}${delm}${i.gender}${delm}${i.xp}${delm}${i.category}]"
+}
+
+pub fn (mut i Item) ywinfo_prices_2str() string 
+{
+	mut new := ""
+	for price in i.yw_info_prices
+	{
+		new += "${price.price},${price.approve},${price.approved_by},${price.timestamp}\n"
+	}
+	
+	return new
 }
 
 /*

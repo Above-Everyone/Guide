@@ -70,7 +70,7 @@ pub fn new(p_content string) Profile
 			utils.match_starts_with(line, "facebook:") {
 				if line_arg.len > 0 { p.facebook = line_arg[1].trim_space() }
 			}
-			utils.match_starts_with(line, "faceookID:") {
+			utils.match_starts_with(line, "facebookID:") {
 				if line_arg.len > 0 { p.facebook_id = line_arg[1].trim_space() }
 			}
 			utils.match_starts_with(line, "[@INVENTORY]") {

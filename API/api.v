@@ -91,7 +91,8 @@ pub fn (mut api API) search() vweb.Result
 	}
 
 	if check_item.results.len == 1 {
-		return api.text("${check_item.results[0].item2api()}")
+		check_item.results[0].ywinfo_price_logs()
+		return api.text("${check_item.results[0].item2api()}\n${check_item.results[0].ywinfo_prices_2str()}")
 	}
 
 	mut api_items := ""
