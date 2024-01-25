@@ -6,3 +6,22 @@
 [YoMarket Discord](https://discord.gg/HJ7V95YAVp)
 
 </div>
+
+
+### How To Install 
+
+[Ubuntu 20.04+] Download directly from git
+
+```
+$ sudo apt update -y
+$ sudo apt install git make -y
+$ git clone https://github.com/Above-Everyone/YoMarket.git
+$ cd YoMarket
+$ make
+```
+
+### Run API
+
+```
+$ screen -dmS api ./api
+```
