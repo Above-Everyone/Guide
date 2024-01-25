@@ -51,6 +51,15 @@ pub enum Settings_T
 	display_fs			= 0x00014
 	display_wtb			= 0x00015
 	display_activity	= 0x00016
+
+	add_activity		= 0x00017
+
+	add_to_invo			= 0x00018
+	add_to_fs			= 0x00019
+	add_to_wtb			= 0x00020
+	rm_from_fs			= 0x00021
+	rm_from_fs			= 0x00022
+	rm_from_wtb			= 0x00023
 }
 
 pub struct FS 

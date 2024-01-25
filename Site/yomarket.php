@@ -146,7 +146,8 @@ class YoMarket
             return (new Response(ResponseType::EXACT,  (new Item(explode(",", YoMarket::remove_strings($api_resp, array("'", "]", "[")))))));
 
         
-        if(((int)$query) > 0 && str_contains($api_resp, "\n"))
+        $lines = explode("\n", $api_resp);
+        if(str_contains($api_resp, "\n") && !str_starts_with($lines[1], "[") && !str_ends_with($line[1], "]"))
         {
             $item_info = explode("\n", $api_resp);
 
@@ -160,8 +161,6 @@ class YoMarket
             return (new Response(ResponseType::EXACT, $i));
         }
 
-        $lines = explode("\n", $api_resp);
-
         foreach($lines as $line)
         {
             $info = explode(",", YoMarket::remove_strings($line, array("'", "]", "[")));
@@ -174,6 +173,7 @@ class YoMarket
         if(count($this->found) > 1)
             return(new Response(ResponseType::EXTRA, $this->found));
 
+        echo 'here';
         return (new Response(ResponseType::NONE, 0));
     }
 

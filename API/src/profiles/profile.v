@@ -126,7 +126,7 @@ pub fn (mut p Profile) edit(setting_t Settings_T, new_data string) bool
 			p.facebook_id = new_data
 		}
 		.display_badges, .display_worth, .display_invo, .display_fs, .display_wtb, .display_activity {
-			if new_data == "1" || new_data == "true" {
+			if new_data.bool() {
 				p.display_badges = true
 			}
 		} else {}

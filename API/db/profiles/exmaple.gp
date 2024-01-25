@@ -21,6 +21,11 @@
     display_activity: false
 }
 
+[@ACTIVITIES]
+{
+    
+}
+
 [@INVENTORY]
 {
 
