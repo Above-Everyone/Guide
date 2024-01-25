@@ -162,9 +162,8 @@ pub fn (mut api API) save_end() vweb.Result
 }
 
 /*
-	All Profile Endpoint Below
+	Login Auth Endpoint Below
 */
-
 ['/auth']
 pub fn (mut api API) auth() vweb.Result
 {
@@ -187,10 +186,9 @@ pub fn (mut api API) auth() vweb.Result
 }
 
 ['/profile']
-pub fn (mut api API) auth() vweb.Result
+pub fn (mut api API) profile() vweb.Result
 {
 	username 	:= api.query['username'] or { "" }
-	password 	:= api.query['password'] or { "" }
 	user_ip 	:= api.query['user_ip'] or { "" }
 
 	mut gd := src.Guide{}
@@ -198,11 +196,5 @@ pub fn (mut api API) auth() vweb.Result
 
 	mut user := gd.find_profile(username)
 
-	/* Validating User */
-	if user.username == username && user.password == password 
-	{
-		return api.text("${user.auth2str()}")
-	}
-
-	return api.text("[ X ] Error, Invalid information provided!")
+	return api.text("${user.profile2api()}")
 }

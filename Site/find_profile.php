@@ -1,9 +1,8 @@
 <?php
 include_once("market_profiles.php");
 include_once("yomarket.php");
-$path = $_SERVER['REQUEST_URI'] ?? "";
-$profile_name = YoMarket::remove_strings($path, array("/", "@"));
-$check_auth = Profiles::find_profile($profile_name, "");
+$profile_name = YoMarket::remove_strings($_SERVER['REQUEST_URI'], array("/", "@"));
+$check_auth = Profiles::find_profile($profile_name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -192,6 +191,12 @@ background: #88ba1c;
                   ?>
                     <i class="fab fa-facebook fa-lg"></i>
                   </a>
+                  <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
+                    <i class="fab fa-twitter fa-lg"></i>
+                  </a>
+                  <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
+                    <i class="fab fa-instagram fa-lg"></i>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -210,10 +215,7 @@ background: #88ba1c;
                     <i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Profile"></i>
                   </a>
                 </div>
-                <?php
-                  $t = "https://yw-web.yoworld.com/user/images/yo_avatars/000/". substr($check_auth->yoworld_id, 0, 3). "/". substr($check_auth->yoworld_id, 3, 3). "/$check_auth->yoworld_id.png";
-                  echo '<center><img width="250" height="400" src="'. $t. '"/></center>';
-                ?>
+                <center><img width="250" height="400" src="https://yw-web.yoworld.com/user/images/yo_outfits/000/187/753/187753659/12256929.png"/></center>
               </div>
             </div>
           </div>
@@ -288,7 +290,7 @@ background: #88ba1c;
         <div class="col-12 mt-4">
           <div class="card mb-4">
             <div class="card-header pb-0 p-3">
-              <h6 class="mb-1">For Sale</h6>
+              <h6 class="mb-1">List Of Items For Sale</h6>
               <p class="text-sm">List Of <?php echo $check_auth->username; ?>'s items</p>
             </div>
             <div class="card-body p-3">
@@ -324,8 +326,8 @@ background: #88ba1c;
         <div class="col-12 mt-4">
           <div class="card mb-4">
             <div class="card-header pb-0 p-3">
-              <h6 class="mb-1">Want to buy</h6>
-              <p class="text-sm">List of items <?php echo $check_auth->username; ?> is looking</p>
+              <h6 class="mb-1">List Of Items Wanted</h6>
+              <p class="text-sm">List Of <?php echo $check_auth->username; ?>'s items</p>
             </div>
             <div class="card-body p-3">
               <div class="row">

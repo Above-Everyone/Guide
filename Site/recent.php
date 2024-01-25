@@ -168,8 +168,6 @@ font-size: 20px;
                 
                 foreach($reversed as $log)
                 {
-                    $r = (new YoMarket())->searchItem($log->query, "");
-                    $c_item = $r->result;
                     $t = "https://yw-web.yoworld.com/cdn/items/". substr($log->query, 0, 2). "/". substr($log->query, 2, 2). "/". $log->query. "/". $log->query. "_60_60.gif";
                     echo '<tr>';
                     echo '<td>';
@@ -178,8 +176,7 @@ font-size: 20px;
                     echo '<img src="'. $t. '" class="avatar avatar-sm me-3" alt="user1">';
                     echo '</div>';
                     echo '<div class="d-flex flex-column justify-content-center">';
-                    echo '<h6 class="mb-0 text-sm">'. $c_item->name. '</h6>';
-                    echo '<p class="text-xs text-secondary mb-0">'. $c_item->id. '</p>';
+                    echo '<p class="text-xs text-secondary mb-0">'. $log->query. '</p>';
                     echo '</div>';
                     echo '</div>';
                     echo '<td>';
@@ -187,7 +184,7 @@ font-size: 20px;
                     echo '<p class="text-xs text-secondary mb-0">Old Price: '. $log->old_price. '</p>';
                     echo '</td>';
                     echo '<td class="align-middle text-center">';
-                    echo '<span class="text-secondary text-xs font-weight-bold">'. $c_item->update. '</span>';
+                    echo '<span class="text-secondary text-xs font-weight-bold">'. $log->timestamp. '</span>';
                     echo '</td>';
                     echo '</tr>';
                 }

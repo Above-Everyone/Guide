@@ -227,6 +227,16 @@ pub fn (mut i Item) ywinfo_prices_2str() string
 
 	Incase, it needs to be saved
 */
+pub fn (mut i Item) item2profile() string
+{
+	return "${i.name},${i.id},${i.url},${i.price},${i.update}"
+}
+
+/*
+	[@DOC]
+
+	Incase, it needs to be saved
+*/
 pub fn (mut i Item) to_db() string
 {
 	return "('${i.name}','${i.id}','${i.url}','${i.price}','${i.update}')"

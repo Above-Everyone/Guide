@@ -26,6 +26,7 @@ pub struct Profile
 		display_wtb			bool
 		display_activity	bool
 
+		activites 			[]Activity
 		invo 				[]items.Item
 		fs_list				[]FS
 		wtb_list			[]WTB
@@ -52,6 +53,22 @@ pub enum Settings_T
 	display_activity	= 0x00016
 }
 
+pub struct FS 
+{
+	pub mut:
+		posted_timestamp	string
+		fs_price			string
+		item				items.Item
+}
+
+pub struct WTB 
+{
+	pub mut:
+		posted_timestamp	string
+		wtb_price			string
+		item				items.Item
+}
+
 pub enum List_T
 {
 	null 		= 0x00101
@@ -75,18 +92,50 @@ pub enum Badges
 	nmdz = 0x00207
 }
 
-pub struct FS 
+pub enum Activity_T 
 {
-	pub mut:
-		posted_timestamp	string
-		fs_price			string
-		item				items.Item
+	null 			= 0x690000
+	item_sold 		= 0x690001
+	item_bought		= 0x690002
+	item_viewed		= 0x690003
+	price_change	= 0x690004
 }
 
-pub struct WTB 
+pub struct Activity 
 {
 	pub mut:
-		posted_timestamp	string
-		wtb_price			string
-		item				items.Item
+		act_t 		Activity_T
+		item		items.Item
+		price		string
+		timestamp 	string
+}
+
+pub fn new_activity(actt Activity_T, itm items.Item, p string, t string) Activity
+{
+	return Activity{act_t: actt, item: itm, price: p, timestamp: t}
+}
+
+pub fn activityt2str(act_t Activity_T) string 
+{
+	match act_t
+	{
+		.item_sold {
+			"item_sold"
+		}
+		.item_bought {
+			"item_bought"
+		}
+		.item_viewed {
+			"item_viewed"
+		}
+		.price_change {
+			"price_change"
+		} else {}
+	}
+	return ""
+}
+
+pub fn (mut a Activity) activity2str() string
+{
+	return "('${a.act_t}','${a.item.item2profile()}','${a.price}','${a.timestamp}')"
 }

@@ -1,7 +1,7 @@
 <?php
 include_once("yomarket.php");
 
-$r = (new YoMarket())->stats();
+$r = YoMarket::stats();
 
 $stats = explode(",", $r->result);
 $db_c = $stats[0];
@@ -79,9 +79,9 @@ $visitor_c = 0;
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Unique Visitors</p>
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Admins</p>
                     <h5 class="font-weight-bolder mb-0">
-                      N/A
+                      7
                     </h5>
                   </div>
                 </div>

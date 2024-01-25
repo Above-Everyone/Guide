@@ -146,7 +146,7 @@ class YoMarket
             return (new Response(ResponseType::EXACT,  (new Item(explode(",", YoMarket::remove_strings($api_resp, array("'", "]", "[")))))));
 
         
-        if(((int)"26295") > 0 && str_contains($api_resp, "\n"))
+        if(((int)$query) > 0 && str_contains($api_resp, "\n"))
         {
             $item_info = explode("\n", $api_resp);
 
@@ -201,11 +201,11 @@ class YoMarket
             return (new Response(ResponseType::API_FAILURE, 0));
         }
 
-        $lines = explode("\n", $api_resp);
+        $lines = explode("\n", YoMarket::remove_strings($api_resp, array("'", "[", "]", "(", ")")));
 
         foreach($lines as $line)
         {
-            $log_info = explode(",", YoMarket::remove_strings($line, array("'", "]", "[")));
+            $log_info = explode(",", YoMarket::remove_strings($line, array("'", "]", "[", "(", ")")));
             if(count($log_info) >= 5) {
                 array_push($this->logs, (new price_log($log_info)));
             }

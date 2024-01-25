@@ -73,6 +73,9 @@ pub fn new(p_content string) Profile
 			utils.match_starts_with(line, "facebookID:") {
 				if line_arg.len > 0 { p.facebook_id = line_arg[1].trim_space() }
 			}
+			utils.match_starts_with(line, "[@ACTIVITIES]") {
+				p.activites = p.parse_activities(p_content, line_c)
+			}
 			utils.match_starts_with(line, "[@INVENTORY]") {
 				p.invo = p.parse_invo(p_content, line_c)
 			}
@@ -132,6 +135,38 @@ pub fn (mut p Profile) edit(setting_t Settings_T, new_data string) bool
 	return true
 }
 
+pub fn (mut p Profile) parse_activities(content string, line_n int) []Activity
+{
+	
+	mut new := []Activity{}
+	mut lines := content.split("\n")
+	for i in line_n+1..(lines.len)
+	{
+		if lines[i].trim_space() == "}" || lines[i].trim_space() == "" || lines[i].contains("}") { break }
+		if lines[i].contains("{") == false { 
+
+			activity_info := lines[i].split(",")
+			match activity_info[0].trim_space()
+			{
+				"SOLD" {
+					new << new_activity(Activity_T.item_sold, items.new(activity_info[1..6]), activity_info[6], activity_info[activity_info.len-1])
+				}
+				"BOUGHT" {
+					new << new_activity(Activity_T.item_bought, items.new(activity_info[1..6]), activity_info[6], activity_info[activity_info.len-1])
+				}
+				"VIEWED" {
+					new << new_activity(Activity_T.item_viewed, items.new(activity_info[1..6]), "", activity_info[activity_info.len-1])
+				}
+				"CHANGED" {
+					new << new_activity(Activity_T.price_change, items.new(activity_info[1..6]), activity_info[6], activity_info[activity_info.len-1])
+				} else {}
+			}
+		}
+	}
+
+	return new
+}
+
 pub fn (mut p Profile) parse_invo(content string, line_n int) []items.Item
 {
 	
@@ -156,13 +191,13 @@ pub fn (mut p Profile) parse_fs(content string, line_n int) []FS
 	
 	for i in line_n+1..(lines.len)
 	{
-		if lines[i].trim_space() == "}" { break }
-		if lines[i].trim_space() == "" { continue }
+		if lines[i].trim_space() == "}" || lines[i].trim_space() == "" || lines[i].contains("}") { break }
 		if lines[i].contains("{") == false { 
 			fs_item_info := lines[i].split(",")
+			if fs_item_info.len < 2 { continue }
 
 			mut new_wtb := FS{}
-			new_wtb.item = items.new(fs_item_info[0..(fs_item_info.len-3)])
+			new_wtb.item = items.new(fs_item_info[0..5])
 			new_wtb.fs_price = fs_item_info[fs_item_info.len-2]
 			new_wtb.posted_timestamp = fs_item_info[fs_item_info.len-1]
 
@@ -213,10 +248,17 @@ pub fn (mut p Profile) profile2str() string
    Badges => ${p.display_badges} | Worth => ${p.display_worth} | INVO => ${p.display_invo} | FS => ${p.display_fs} | WTB => ${p.display_wtb} | Activity => ${p.display_activity}"
 }
 
-pub fn (mut p Profile) profile2str() string 
+pub fn (mut p Profile) profile2api() string 
 {
-	acct_info := "[${p.username},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
+	acct_info := "[${p.username},none,${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
 	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
+
+	mut activities := "[@ACTIVITIES]"
+
+	for mut activity in p.activites 
+	{
+		activities += "${activity.activity2str()}\n"
+	}
 
 	mut invo := "[@INVENTORY]"
 
@@ -239,7 +281,7 @@ pub fn (mut p Profile) profile2str() string
 		wtb_list += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.posted_timestamp}\n"
 	}
 
-	return "${acct_info}\n${acct_settings}\n[@INVENTORY]${invo}\n[@FS]${fs_list}\n[@WTB]${wtb_list}"
+	return "${acct_info}\n${acct_settings}\n${activities}\n${invo}\n${fs_list}\n${wtb_list}".replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("'", "")
 }
 
 pub fn (mut p Profile) auth2str() string
@@ -247,6 +289,13 @@ pub fn (mut p Profile) auth2str() string
 	acct_info := "[${p.username},${p.password},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
 	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
 
+	mut activities := "[@ACTIVITIES]"
+
+	for mut activity in p.activites 
+	{
+		activities += "${activity.activity2str()}\n"
+	}
+
 	mut invo := "[@INVENTORY]"
 
 	for mut invo_item in p.invo 
@@ -268,5 +317,5 @@ pub fn (mut p Profile) auth2str() string
 		wtb_list += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.posted_timestamp}\n"
 	}
 
-	return "${acct_info}\n${acct_settings}\n[@INVENTORY]${invo}\n[@FS]${fs_list}\n[@WTB]${wtb_list}"
+	return "${acct_info}\n${acct_settings}\n${activities}\n${invo}\n${fs_list}\n${wtb_list}".replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("'", "")
 }
