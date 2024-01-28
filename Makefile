@@ -13,6 +13,7 @@ build:
 	cd YoMarket
 	v api.v -prod -o yomarket 
 	v watcher.v -prod -o watcher
+	v scraper -prod -o watcher
 
 clean:
 	sudo rm -rf /root/v
