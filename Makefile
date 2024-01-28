@@ -2,7 +2,7 @@
 
 dependencies:
 	sudo apt update -y
-	sudo apt install screen gcc git make -y; cd
+	sudo apt install screen gcc -y; cd
 	git clone https://github.com/vlang/v.git
 	cd v
 	make
