@@ -1,17 +1,20 @@
-.PHONY: all
+.PHONY: dependencies build clean
 
-all:
+dependencies:
 	sudo apt update -y
-	sudo apt install screen gcc git make -y
+	sudo apt install screen gcc git make -y; cd
 	git clone https://github.com/vlang/v.git
 	cd v
 	make
 	./v symlink
-	cd ..
-	v api.v
-	v watcher.v
+
+build:
+	cd; git clone https://github.com/Above-Everyone/YoMarket
+	cd YoMarket
+	v api.v -prod -o yomarket 
+	v watcher.v -prod -o watcher
 
 clean:
-	sudo rm -rf v
-	sudo mv api /bin/
-	sudo mv watcher /bin/
+	sudo rm -rf /root/v
+	sudo mv /root/YoMarket/api /bin/
+	sudo mv /root/YoMarket/watcher /bin/

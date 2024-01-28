@@ -7,7 +7,6 @@ import rand
 import src
 import src.items
 import src.utils
-import src.profiles
 
 pub struct API 
 {
@@ -18,6 +17,7 @@ pub struct API
 
 pub const (
 	admins = 4
+	website_backend = ""
 )
 
 fn main() {
@@ -25,19 +25,21 @@ fn main() {
 	vweb.run(&API{guide: gd}, 80)
 }
 
-['/index']
+@['/index']
 pub fn (mut api API) index() vweb.Result 
 {
 	api.text("Welcome To Guide API v1.00 Written In V, By JaCKeR1x")
 	return $vweb.html()
 }
 
-['/statistics']
+@['/statistics']
 pub fn (mut api API) stats() vweb.Result
 {
+	ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
+	if ip != website_backend {
+		return api.text("This endpoint is for YoMarket WebSite Only!")
+	}
 	mut item_c := 0
-	mut t := 0
-
 	lock api.guide {
 		item_c = api.guide.item_c
 	}
@@ -48,7 +50,7 @@ pub fn (mut api API) stats() vweb.Result
 	return api.text("${item_c},${search_count},${change_count}")
 }
 
-['/search']
+@['/search']
 pub fn (mut api API) search() vweb.Result
 {
 	query 		:= api.query['q'] or { "" }
@@ -62,16 +64,11 @@ pub fn (mut api API) search() vweb.Result
 
 	/* Selecting 15 random items to display */
 	mut random_items := ""
-	mut item_c := 0
 	if query == "randomized" {
 
-		for mut i in gd.items {
-
-			if item_c == 15 { break }
+		for _ in 0..15 {
 			num := rand.int_in_range(0, gd.items.len) or { 0 }
 			random_items += gd.items[num].item2api() + "\n"
-			item_c++
-
 		}
 
 		return api.text("${random_items}")
@@ -104,12 +101,11 @@ pub fn (mut api API) search() vweb.Result
 	return api.text("${api_items}")
 }
 
-['/change']
+@['/change']
 pub fn (mut api API) change_price() vweb.Result
 {
 	item_id 	:= api.query['id'] or { "" }
 	new_price 	:= api.query['price'] or { "" }
-	approved 	:= api.query['status'] or { "" }
 	user_ip 	:= api.query['ip'] or { api.ip() }
 
 	
@@ -123,37 +119,52 @@ pub fn (mut api API) change_price() vweb.Result
 	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
 
 	/* Validating Managers */
-	if !utils.is_manager(user_ip) {
+	if !src.is_manager(user_ip) {
 		gd.add_suggestion(mut item, new_price)
 		println("[ + ] ${current_time} | An unknown user tried change an item price => \n(${user_ip},${item_id},${new_price})...!")
 		return api.text("[ X ] Error, You are not a price manager to use this. The price has been sent to admins to investigate....")
 	}
 
+	if !check {
+		println("[ X ] Error, failed to change price on ${item.id} ${new_price}...!")
+		return api.text("[ X ] Error, failed to change price on ${item.id} ${new_price}...!")
+	}
+
 	return api.text("[ + ] ${item.name}'s price has been successfully updated to ${item.price}...!\n${item.item2api()}")
 }
 
-['/price_logs']
+@['/price_logs']
 pub fn (mut api API) price_logs() vweb.Result
 {
+	ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
+	if ip != website_backend {
+		return api.text("This endpoint is for YoMarket WebSite Only!")
+	}
+	
 	changes 	:= os.read_lines("logs/changes.log") or { [] }
 	total 		:= changes.len
 	mut last 	:= changes.clone()
 	
 	if total > 30 {
 		last_t := changes.len-30
-		last = changes[last_t..total]
+		last = changes.clone()[last_t..total]
 	}
 
 	return api.text("${last}".replace("['", "").replace("']", "").replace("', '", "\n"))
 }
 
-['/all_suggestion']
+@['/all_suggestion']
 pub fn (mut api API) all_suggestion() vweb.Result 
 {
+	ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
+	if ip != website_backend {
+		return api.text("This endpoint is for YoMarket WebSite Only!")
+	}
+	
 	return api.text(os.read_file(utils.suggestion_filepath) or { "" })
 }
 
-['/save']
+@['/save']
 pub fn (mut api API) save_end() vweb.Result 
 {
 	lock api.guide { api.guide.save_db() }
@@ -164,12 +175,17 @@ pub fn (mut api API) save_end() vweb.Result
 /*
 	Login Auth Endpoint Below
 */
-['/auth']
+@['/auth']
 pub fn (mut api API) auth() vweb.Result
 {
+	
 	username 	:= api.query['username'] or { "" }
 	password 	:= api.query['password'] or { "" }
-	user_ip 	:= api.query['user_ip'] or { "" }
+
+	ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
+	if ip != website_backend {
+		return api.text("This endpoint is for YoMarket WebSite Only!")
+	}
 
 	mut gd := src.Guide{}
 	lock api.guide { gd = api.guide }
@@ -179,17 +195,23 @@ pub fn (mut api API) auth() vweb.Result
 	/* Validating User */
 	if user.username == username && user.password == password 
 	{
+		// Log action
 		return api.text("${user.auth2str()}")
 	}
 
+	// Log action
 	return api.text("[ X ] Error, Invalid information provided!")
 }
 
-['/profile']
+@['/profile']
 pub fn (mut api API) profile() vweb.Result
 {
+	ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
+	if ip != website_backend {
+		return api.text("This endpoint is for YoMarket WebSite Only!")
+	}
+
 	username 	:= api.query['username'] or { "" }
-	user_ip 	:= api.query['user_ip'] or { "" }
 
 	mut gd := src.Guide{}
 	lock api.guide { gd = api.guide }

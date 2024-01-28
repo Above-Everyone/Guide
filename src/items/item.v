@@ -111,8 +111,8 @@ pub fn (mut i Item) add_extra_info(add_main_info bool) bool
         return false
 	}
 
-	json_data := (jsn.raw_decode("${results.body}") or { jsn.Any{} }).as_map()
-	response := (jsn.raw_decode("${json_data['response']}") or { jsn.Any{} }).as_map()
+	json_data := (jsn.raw_decode(results.body) or { "" }).as_map()
+	response := (jsn.raw_decode("${json_data['response'] or {0}}") or { "" }).as_map()
 
 	if add_main_info {
 		i.name = (response['item_name'] or { "" }).str()
@@ -120,17 +120,17 @@ pub fn (mut i Item) add_extra_info(add_main_info bool) bool
 		i.url = "https://yw-web.yoworld.com/cdn/items/${item_id[0..2]}/${item_id[2..4]}/${item_id}/${item_id}_60_60.gif"
 	}
 
-	i.gender = (response['gender']).str()
-    i.is_tradable = (response['is_tradable']).int()
-    i.is_giftable = (response['can_gift']).int()
-    i.category = (response['category']).str()
-    i.xp = (response['xp']).str()
+	i.gender = (response['gender'] or { "" }).str()
+    i.is_tradable = (response['is_tradable'] or { "" }).int()
+    i.is_giftable = (response['can_gift'] or { "" }).int()
+    i.category = (response['category'] or { "" }).str()
+    i.xp = (response['xp'] or { "" }).str()
 
-	if "${response['active_in_store']}" == "1" { i.in_store = true } 
+	if (response['active_in_store'] or { 0 }).str() == "1" { i.in_store = true } 
     else { i.in_store = true }
 
-    if "${response['price_coins']}" != "0" { i.store_price = "${response['price_coins']}c" }
-    else if "${response['price_cash']}" != "0" { i.store_price = "${response['price_cash']}yc" }
+    if (response['price_coins'] or { 0 }).str() != "0" { i.store_price = (response['price_coins'] or { 0 }).str() + "c" }
+    else if (response['price_cash'] or { 0 }).str() != "0" { i.store_price = (response['price_cash'] or { 0 }).str() + "yc" }
     else { i.store_price = "0" }
 
 	return true
