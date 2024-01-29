@@ -59,7 +59,7 @@ fn (mut s Scraper) start_scraping()
 	{
 		s.current_page = i
 		content := http.get_text("${page_url}${i}")
-		s.scrape_page(content, i)
+		spawn s.scrape_page(content, i)
 	}
 }
 
