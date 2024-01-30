@@ -1,4 +1,4 @@
-module utils
+module str_utils
 
 /*
 	Function designed to be used in 'string' match block

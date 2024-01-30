@@ -1,14 +1,14 @@
 module src
 
-import src.profiles
+import src.db
 
-pub fn (mut g Guide) find_profile(username string) profiles.Profile
+pub fn (mut g Guide) find_profile(username string) db.Profile
 {
-	if username.len < 1 { return profiles.Profile{} }
+	if username.len < 1 { return db.Profile{} }
 	for user in g.profiles 
 	{
 		if user.username == username { return user }
 	}
 
-	return profiles.Profile{}
+	return db.Profile{}
 }

@@ -1,5 +1,6 @@
-module items 
+module db 
 
+import os
 import net.http
 import x.json2 as jsn
 
@@ -34,42 +35,17 @@ pub struct Item
 		yw_info_prices	[]YW_INFO_PRICES
 }
 
-pub struct YW_INFO_PRICES
-{
-	pub mut:
-		price			string
-		approve 		bool
-		approved_by		string
-		timestamp		string
-}
-
-pub struct Prices
-{
-    pub mut:
-        username        string
-        old_price       string
-        old_update      string
-        item            Item
-}
-
-pub struct YW_INFO_LOG
-{
-    pub mut:
-        item    Item
-        prices  []string
-        update  []string
-        status  []string
-}
-
 /*
 	[DOC]
-
-	Create a new 'Item' struct providing an array of item information
+        pub fn new_item(arr []string) Item
+        
+        Description:
+	        Create a new 'Item' struct providing an array of item information
 */
-pub fn new(arr []string) Item 
+pub fn new_item(arr []string) Item 
 {
 	if arr == [] { return Item{} }
-
+    
 	if arr.len == 5 
 	{
 		return Item{
@@ -80,6 +56,11 @@ pub fn new(arr []string) Item
 			update: arr[4]
 		}
 	}
+
+    if arr.len < 11 { 
+        println("\x1b[31m[ X ]\x1b[39m Error, Invalid Array ${arr}")
+        return Item{}
+    }
 	
 	return Item{
 		name: arr[0],
@@ -99,8 +80,10 @@ pub fn new(arr []string) Item
 
 /*
 	[@DOC]
+    pub fn (mut i Item) add_extra_info(add_main_info bool) bool 
 
-	Add more information besides the basics
+	Description: 
+        Add more information besides the basics using yoworlddb.com API
 */
 pub fn (mut i Item) add_extra_info(add_main_info bool) bool 
 {
@@ -138,64 +121,34 @@ pub fn (mut i Item) add_extra_info(add_main_info bool) bool
 
 /*
 	[@DOC]
+    pub fn (mut i Item) price_logs() []string 
 
-	Retrieve all price changes
+	Description: 
+	    Retrieve all price changes
 */
 pub fn (mut i Item) price_logs() []string 
 {
-	
+	mut logs := os.read_file("logs/changes.log") or { "" }
+    lines := logs.split("\n")
+
+
+
+    for line in lines
+    {
+        if line.contains("'${i.id}'") {
+
+        }
+    }
 	return ['']
 }
 
 /*
-	[@DOC]
+    [@DOC]
+        pub fn (mut i Item) parse_ywinfo_prices(arr []string) YW_INFO_PRICES
 
-	Retrieve all YW.Info's price changes
+        Description:
+            Creates a new YW_INFO_PRICES struct from an array
 */
-pub fn (mut i Item) ywinfo_price_logs()
-{
-	mut check := http.get_text("https://api.yoworld.info/api/items/${i.id}")
-
-    lines := check.split(",")
-
-	mut start_scraping := false
-    mut price_info := []string{}
-    for line in lines
-    {
-        mut line_arg := line.replace("{", "").replace("}", "").replace("\"", "").replace("[", "").replace("\n", "").split(":")
-		if "staff_item_price_proposal" in line_arg { start_scraping = true }
-
-
-        if line_arg.len >= 2 && start_scraping {
-            match line_arg[0] {
-                "updated_at" {
-                    if price_info.len == 0 && line_arg[1] != "false" { 
-                        price_info << line_arg[1]
-                    }
-                    
-                }
-                "price" {
-                    if price_info.len == 1 && line_arg[1] != "false" { 
-                        price_info << line_arg[1]
-                    }
-                }
-                "approved" {
-                    if price_info.len == 2 {
-                        price_info << line_arg[1]
-                    }
-                }
-                "username" {
-                    if price_info.len == 3 && line_arg[1] != "false" {
-                        price_info << line_arg[1]
-                        i.yw_info_prices << i.parse_ywinfo_prices(price_info)
-                        price_info = []string{}
-                    }
-                } else {}
-            }
-        }
-    }
-}
-
 pub fn (mut i Item) parse_ywinfo_prices(arr []string) YW_INFO_PRICES
 {
     return YW_INFO_PRICES{price: arr[1], approve: arr[2].bool(), approved_by: arr[3], timestamp: arr[0]}
@@ -203,8 +156,10 @@ pub fn (mut i Item) parse_ywinfo_prices(arr []string) YW_INFO_PRICES
 
 /*
 	[@DOC]
+        pub fn (mut i Item) item2str(delm string) string
 
-	Output the item in string type however you want using a delimiter
+	    Description:
+            Output the item in string type however you want using a delimiter
 */
 pub fn (mut i Item) item2str(delm string) string
 {
@@ -224,8 +179,10 @@ pub fn (mut i Item) ywinfo_prices_2str() string
 
 /*
 	[@DOC]
+        pub fn (mut i Item) item2profile() string
 
-	Incase, it needs to be saved
+	    Description:
+            Incase, it needs to be saved
 */
 pub fn (mut i Item) item2profile() string
 {
@@ -234,8 +191,10 @@ pub fn (mut i Item) item2profile() string
 
 /*
 	[@DOC]
+        pub fn (mut i Item) to_db() string
 
-	Incase, it needs to be saved
+	    Description:
+            Pre-set db line for file saving.
 */
 pub fn (mut i Item) to_db() string
 {
@@ -244,8 +203,10 @@ pub fn (mut i Item) to_db() string
 
 /*
 	[@DOC]
+        pub fn (mut i Item) item2api() string
 
-	Output the item in string type for API
+	    Description:
+            Return the item info in api format for clients
 */
 pub fn (mut i Item) item2api() string
 {

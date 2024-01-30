@@ -1,8 +1,7 @@
 module src
 
 import time
-import src.utils
-import src.items
+import src.db
 
 pub fn (mut g Guide) search(query string, get_extra_info bool) Response
 {
@@ -36,12 +35,12 @@ pub fn (mut g Guide) search(query string, get_extra_info bool) Response
 		return Response{r_type: ResultType._extra, results: find}
 	}
 
-	return Response{r_type: ResultType._none, results: []items.Item{}}
+	return Response{r_type: ResultType._none, results: []db.Item{}}
 }
 
-pub fn (mut g Guide) find_by_name() []items.Item
+pub fn (mut g Guide) find_by_name() []db.Item
 {
-	mut found := []items.Item{}
+	mut found := []db.Item{}
 
 	for mut item in g.items 
 	{
@@ -55,21 +54,21 @@ pub fn (mut g Guide) find_by_name() []items.Item
 	return found
 }
 
-pub fn (mut g Guide) find_by_id() items.Item
+pub fn (mut g Guide) find_by_id() db.Item
 {
 	for item in g.items
 	{
 		if "${item.id}" == "${g.query}" { return item }
 	}
 
-	return items.Item{}
+	return db.Item{}
 }
 
-pub fn (mut g Guide) change_price(mut item items.Item, new_price string, user_ip string) bool 
+pub fn (mut g Guide) change_price(mut item db.Item, new_price string, user_ip string) bool 
 {
 	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
 	
-	utils.new_log(utils.App_T._site, utils.Log_T._change, user_ip, "${item.id}", item.price, new_price)
+	new_log(App_T._site, Log_T._change, user_ip, "${item.id}", item.price, new_price)
 	g.items[item.idx].price = new_price
 	g.items[item.idx].update = current_time
 

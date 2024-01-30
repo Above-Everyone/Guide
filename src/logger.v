@@ -1,4 +1,4 @@
-module utils
+module src
 
 import os
 import time
@@ -9,6 +9,11 @@ pub const (
     changes_filepath     = "logs/changes.log"
     visits_filepath      = "logs/visits.log"
     suggestion_filepath  = "logs/suggestions.log"
+
+	/* Discord API Webhook Endpoints */
+	search_api = "https://discordapp.com/api/webhooks/1199621453256081491/cwIygRnaTn9hK9fvdG44O_sNmBqHF-UaNx-al2nklXPFjY2cWjAdvLW0N-Z30OSvcJlE"
+	change_api = "https://discord.com/api/webhooks/1201347084591300639/xuHLzv6JjyMggubcTWXros2L4rjReG1KXQS-dhdGXMt4KbmDJimM6xOJ69dYNMYgWng-"
+
 )
 
 pub enum Log_T
@@ -49,18 +54,38 @@ pub fn new_log(app_t App_T, log_t Log_T, args ...string)
             db.write("('${app}','${args[0]}','${args[1]}','${args[2]}','${args[3]}','${current_time}')\n".bytes()) or { 0 }
 		} else {}
 	}
-
-	mut json_format := os.read_file("json_format.txt") or { 
-		println("Failed")
-		return
-	}
-	json_format = json_format.replace("{YM_APPLICATION_TYPE}", app).replace("{CLIENTS_IP_ADDRESS}", args[0]).replace("{CLIENTS_SEARCH_QUERY}", args[1]).replace("{YM_RESULT_TYPE}", args[2]).replace("{YM_RESULT_COUNT}", args[3]).replace("{CURRENT_TIME}", current_time)
-	http.post_json("https://discordapp.com/api/webhooks/1199621453256081491/cwIygRnaTn9hK9fvdG44O_sNmBqHF-UaNx-al2nklXPFjY2cWjAdvLW0N-Z30OSvcJlE", json_format) or { 
-		println("Failed")
-		return
-	}
+	send_discord_msg(app_t, log_t, ...args)
 
 	db.close()
+}
+
+pub fn send_discord_msg(app_t App_T, log_t Log_T, args ...string)
+{
+	if args.len < 1 { return }
+
+	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
+	mut json_format := os.read_file("json_format.txt") or { return }
+
+	app := app_to_str(app_t)
+	url := get_api(log_t)
+
+	match app_t
+	{
+		._bot {
+			return
+		}
+		._site {
+            json_format = json_format.replace("{YM_APPLICATION_TYPE}", "${app}").replace("{CLIENTS_IP_ADDRESS}", args[0]).replace("{CLIENTS_SEARCH_QUERY}", args[1]).replace("{YM_RESULT_TYPE}", args[2]).replace("{YM_RESULT_COUNT}", args[3]).replace("{CURRENT_TIME}", current_time)
+			if log_t == ._change {
+				json_format = json_format.replace("{YM_APPLICATION_TYPE}", "${app}").replace("{CLIENTS_IP_ADDRESS}", args[0]).replace("{CLIENTS_SEARCH_QUERY}", args[1]).replace("\"Results Type\"", "\"Old Price\"").replace("{YM_RESULT_TYPE}", args[2]).replace("\"Results Count\"", "\"New Price\"").replace("{YM_RESULT_COUNT}", args[3]).replace("{CURRENT_TIME}", current_time)
+			}
+		}
+		._desktop {
+			return
+		} else {}
+	}
+
+	http.post_json(url, json_format) or { return }
 }
 
 pub fn read_log_db_count(log_t Log_T) int 
@@ -117,6 +142,27 @@ pub fn get_db_path(log_t Log_T) string
 		}
 		._request {
 			return suggestion_filepath
+		} else {}
+	}
+
+	return ""
+}
+
+pub fn get_api(log_t Log_T) string
+{
+	match log_t
+	{
+		._visit {
+			return ""
+		}
+		._search {
+			return search_api
+		}
+		._change {
+			return change_api
+		}
+		._request {
+			return ""
 		} else {}
 	}
 
