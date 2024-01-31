@@ -140,7 +140,7 @@ pub fn get_db_path(log_t Log_T) string
 		._change {
 			return changes_filepath
 		}
-		._request {
+		._suggestion {
 			return suggestion_filepath
 		} else {}
 	}
@@ -161,7 +161,7 @@ pub fn get_api(log_t Log_T) string
 		._change {
 			return change_api
 		}
-		._request {
+		._suggestion {
 			return ""
 		} else {}
 	}

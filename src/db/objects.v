@@ -47,12 +47,13 @@ pub enum Badges
 	trusted = 0x00203
 	reputation = 0x00204
 
-	owner = 0x00205
+	admin = 0x00205
+	owner = 0x00206
 
 	// crew
-	ae = 0x00206
-	pnkm = 0x00207
-	nmdz = 0x00208
+	ae = 0x00207
+	pnkm = 0x00208
+	nmdz = 0x00209
 }
 
 pub enum Activity_T 

@@ -4,3 +4,4 @@
 *.exe
 new_scrape.v
 scraper.exe
+*.log

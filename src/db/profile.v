@@ -12,6 +12,7 @@ pub struct Profile
 		yoworld				string
 		yoworld_id			int
 		net_worth 			string
+		raw_badges			[]string
 		badges 				[]Badges
 
 		discord				string
@@ -20,6 +21,7 @@ pub struct Profile
 		facebook			string
 		facebook_id			string
 
+		display_info		bool
 		display_badges		bool
 		display_worth		bool
 		display_invo		bool
@@ -102,6 +104,12 @@ pub fn new_profile(p_content string) Profile
 			str_utils.match_starts_with(line, "facebookID:") {
 				if line_arg.len > 0 { p.facebook_id = line_arg[1].trim_space() }
 			}
+			str_utils.match_starts_with(line, "display_info:") {
+				p.display_info = line_arg[1].trim_space().bool()
+			}
+			str_utils.match_starts_with(line, "Badges: ") {
+				p.badges = p.parse_badges(line)
+			}
 			str_utils.match_starts_with(line, "[@ACTIVITIES]") {
 				p.activites = p.parse_activities(p_content, line_c)
 			}
@@ -119,6 +127,14 @@ pub fn new_profile(p_content string) Profile
 	}
 
 	return p
+}
+
+pub fn (mut p Profile) is_manager() bool
+{
+	if Badges.admin in p.badges { return true }
+	else if Badges.owner in p.badges { return true }
+
+	return false
 }
 
 /*
@@ -228,6 +244,34 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 	return false
 }
 
+pub fn (mut p Profile) parse_badges(line string) []Badges
+{
+	p.raw_badges = line.replace("Badges:", "").trim_space().split(",")
+	mut badges_obj := []Badges{}
+
+	for badge in p.raw_badges
+	{
+		match badge {
+			"admin" {
+				badges_obj << Badges.admin
+				break
+			}
+			"owner" {
+				badges_obj << Badges.owner
+			}
+			"trusted" {
+				badges_obj << Badges.trusted
+			} else {}
+		}
+	}
+
+	if badges_obj.len == 0 {
+		return [Badges.null]
+	}
+
+	return badges_obj
+}
+
 /*
 	pub fn (mut p Profile) parse_activities(content string, line_n int) []Activity
 
@@ -307,17 +351,21 @@ pub fn (mut p Profile) parse_fs(content string, line_n int) []FS
 	
 	for i in line_n+1..(lines.len)
 	{
-		if lines[i].trim_space() == "}" || lines[i].trim_space() == "" || lines[i].contains("}") { break }
+		if lines[i].trim_space() == "}" || lines[i].trim_space() == "" { break }
 		if lines[i].contains("{") == false { 
 			fs_item_info := lines[i].split(",")
 			if fs_item_info.len < 2 { continue }
 
-			mut new_wtb := FS{}
-			new_wtb.item = new_item(fs_item_info[0..5])
-			new_wtb.fs_price = fs_item_info[fs_item_info.len-2]
-			new_wtb.posted_timestamp = fs_item_info[fs_item_info.len-1]
-
-			new << new_wtb
+			mut new_fs := FS{	item: new_item(fs_item_info[0..5]),
+								fs_price: fs_item_info[fs_item_info.len-4],
+								posted_timestamp: fs_item_info[fs_item_info.len-1],
+								buyer_confirmation: fs_item_info[fs_item_info.len-2],
+								seller_confirmation: fs_item_info[fs_item_info.len-3]
+			}
+			if fs_item_info[fs_item_info.len-2] != "false" && fs_item_info[fs_item_info.len-3] != "false" {
+				new_fs.confirmed_transaction = true
+			}
+			new << new_fs
 		}
 	}
 
@@ -337,16 +385,19 @@ pub fn (mut p Profile) parse_wtb(content string, line_n int) []WTB
 
 	for i in line_n+1..(lines.len)
 	{
-		if lines[i].trim_space() == "}" { break }
-		if lines[i].trim_space() == "" { continue }
+		if lines[i].trim_space() == "}" || lines[i].trim_space() == "" { break }
 		if lines[i].contains("{") == false { 
 			wtb_item_info := lines[i].split(",")
 
-			mut new_wtb := WTB{}
-			new_wtb.item = new_item(wtb_item_info[0..(wtb_item_info.len-3)])
-			new_wtb.wtb_price = wtb_item_info[wtb_item_info.len-2]
-			new_wtb.posted_timestamp = wtb_item_info[wtb_item_info.len-1]
-
+			mut new_wtb := WTB{	item: new_item(wtb_item_info[0..5]),
+								wtb_price: wtb_item_info[wtb_item_info.len-2],
+								posted_timestamp: wtb_item_info[wtb_item_info.len-1],
+								buyer_confirmation: wtb_item_info[wtb_item_info.len-2],
+								seller_confirmation: wtb_item_info[wtb_item_info.len-3]
+			}
+			if wtb_item_info[wtb_item_info.len-2] != "false" && wtb_item_info[wtb_item_info.len-3] != "false" {
+				new_wtb.confirmed_transaction = true
+			}
 			new << new_wtb
 		}
 	}
@@ -374,14 +425,14 @@ pub fn (mut p Profile) list_to_str() string
 
 	for mut fs_item in p.fs_list 
 	{
-		data += "${fs_item.item.item2api()},${fs_item.fs_price},${fs_item.posted_timestamp}\n"
+		data += "${fs_item.item.item2api()},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n"
 	}
 
 	data += "[@WTB]\n"
 
 	for mut wtb_item in p.wtb_list 
 	{
-		data += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.posted_timestamp}\n"
+		data += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.seller_confirmation},${wtb_item.buyer_confirmation},${wtb_item.posted_timestamp}\n"
 	}
 
 	return data
@@ -400,7 +451,7 @@ pub fn (mut p Profile) to_str() string
               Facebook ID => ${p.facebook_id}
 
           [ @DIPLAY_SETTINGS ]
-   Badges => ${p.display_badges} | Worth => ${p.display_worth} | INVO => ${p.display_invo} | FS => ${p.display_fs} | WTB => ${p.display_wtb} | Activity => ${p.display_activity}\n"
+   Info => ${p.display_info} | Badges => ${p.display_badges} | Worth => ${p.display_worth} | INVO => ${p.display_invo} | FS => ${p.display_fs} | WTB => ${p.display_wtb} | Activity => ${p.display_activity}\n"
 
    data += p.list_to_str()
 
@@ -410,19 +461,19 @@ pub fn (mut p Profile) to_str() string
 pub fn (mut p Profile) to_api() string 
 {
 	acct_info := "[${p.username},none,${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
-	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
+	acct_settings := "[${p.display_info},${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
 
 	mut activities := p.list_to_str()
 
-	return "${acct_info}\n${acct_settings}\n${activities}".replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("'", "")
+	return "${acct_info}\n${acct_settings}\n${p.raw_badges}\n${activities}".replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("'", "")
 }
 
 pub fn (mut p Profile) to_auth_str() string
 {
 	acct_info := "[${p.username},${p.password},${p.yoworld},${p.yoworld_id},${p.net_worth},${p.discord},${p.discord_id},${p.facebook},${p.facebook_id}]"
-	acct_settings := "[${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
+	acct_settings := "[${p.display_info},${p.display_badges},${p.display_worth},${p.display_invo},${p.display_fs},${p.display_wtb},${p.display_activity}]"
 
 	mut activities := p.list_to_str()
 
-	return "${acct_info}\n${acct_settings}\n${activities}".replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("'", "")
+	return "${acct_info}\n${acct_settings}\n${p.raw_badges}\n${activities}".replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("'", "")
 }

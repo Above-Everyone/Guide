@@ -16,7 +16,7 @@ pub struct API
 
 pub const (
 	admins = 4
-	website_backend = "195.133.52.252"
+	website_backend = "167.114.155.204"
 	website_backend_ipv6 = "2607:5300:201:3100::8510"
 )
 
@@ -38,10 +38,7 @@ pub fn (mut api API) stats() vweb.Result
 	// $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 	ip := api.form['HTTP_CF_CONNECTING_IP'] or { api.ip() }
 	t_ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
-	if ip != website_backend && ip != website_backend_ipv6 {
-		println("${ip} ${api.query} ${api.form} ${api.header} ")
-		return api.text("This endpoint is for YoMarket WebSite Only!")
-	}
+	
 	mut item_c := 0
 	lock api.guide {
 		item_c = api.guide.item_c
@@ -108,25 +105,26 @@ pub fn (mut api API) search() vweb.Result
 @['/change']
 pub fn (mut api API) change_price() vweb.Result
 {
-	item_id 	:= api.query['id'] or { "" }
-	new_price 	:= api.query['price'] or { "" }
-	user_ip 	:= api.query['ip'] or { api.ip() }
-	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
+	item_id 		:= api.query['id'] or { "" }
+	new_price 		:= api.query['price'] or { "" }
+	user 			:= api.query['user'] or { api.ip() }
+	ip 				:= api.query['ip'] or { api.ip() }
+	current_time 	:= "${time.now()}".replace("-", "/").replace(" ", "-")
+	mut gd 			:= src.Guide{}
 
-	mut gd := src.Guide{}
 	lock api.guide { gd = api.guide }
-
 	gd.query = item_id
 	mut item := gd.find_by_id()
 	
-	/* Validating Managers */
-	if !src.is_manager(user_ip) {
-		gd.add_suggestion(mut item, new_price)
-		println("[ + ] ${current_time} | An unknown user tried change an item price => \n(${user_ip},${item_id},${new_price})...!")
-		return api.text("[ X ] Error, You are not a price manager to use this. The price has been sent to admins to investigate....")
+	mut profile := gd.find_profile(user)
+	if !profile.is_manager()
+	{
+		src.new_log(src.App_T._site, src.Log_T._suggestion, ip, "${item.id}", item.price, new_price)
+		println("[ X ] Warning, An unknown user (${ip}) has tried changing price of ${item.id}, from ${item.price} to ${new_price}...!")
+		return api.text("[ X ] Error, You aren't a manager to change price. Price has been suggested to admins to investigate....")
 	}
 
-	mut check := gd.change_price(mut item, new_price, user_ip)
+	mut check := gd.change_price(mut item, new_price, ip)
 
 	if !check {
 		println("[ X ] Error, failed to change price on ${item.id} ${new_price}...!")
@@ -140,9 +138,6 @@ pub fn (mut api API) change_price() vweb.Result
 pub fn (mut api API) price_logs() vweb.Result
 {
 	ip := api.query['ip'] or { api.ip() }
-	if ip != website_backend && ip != website_backend_ipv6 {
-		return api.text("This endpoint is for YoMarket WebSite Only!")
-	}
 	
 	changes 	:= os.read_lines("logs/changes.log") or { [] }
 	total 		:= changes.len
@@ -160,9 +155,6 @@ pub fn (mut api API) price_logs() vweb.Result
 pub fn (mut api API) all_suggestion() vweb.Result 
 {
 	ip := api.query['ip'] or { api.ip() }
-	if ip != website_backend && ip != website_backend_ipv6 {
-		return api.text("This endpoint is for YoMarket WebSite Only!")
-	}
 	
 	return api.text(os.read_file(src.suggestion_filepath) or { "" })
 }
@@ -178,7 +170,7 @@ pub fn (mut api API) save_end() vweb.Result
 /*
 	Login Auth Endpoint Below
 */
-@['/auth']
+@['/profile/auth']
 pub fn (mut api API) auth() vweb.Result
 {
 	
@@ -186,9 +178,6 @@ pub fn (mut api API) auth() vweb.Result
 	password 	:= api.query['password'] or { "" }
 
 	ip := api.query['ip'] or { api.ip() }
-	if ip != website_backend && ip != website_backend_ipv6 {
-		return api.text("This endpoint is for YoMarket WebSite Only!")
-	}
 
 	mut gd := src.Guide{}
 	lock api.guide { gd = api.guide }

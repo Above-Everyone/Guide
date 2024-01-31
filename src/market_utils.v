@@ -16,12 +16,12 @@ pub fn is_manager(ip string) bool
 	return false
 }
 
-pub fn (mut g Guide) add_suggestion(mut item db.Item, price_suggested string) bool
+pub fn (mut g Guide) add_suggestion(mut item db.Item, price_suggested string, user_ip string) bool
 {
 	mut db_v := os.open_file(suggestion_filepath, "a") or { return false }
 	current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
 
-	db_v.write("('${item.name}','${item.id}','${price_suggested}','${current_time}')\n".bytes()) or { return false }
+	db_v.write("('${item.name}','${user_ip}','${item.id}','${price_suggested}','${current_time}')\n".bytes()) or { return false }
 	db_v.close()
 
 	return true
