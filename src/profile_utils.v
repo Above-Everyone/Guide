@@ -24,3 +24,13 @@ pub fn (mut g Guide) count_admins() int
 
 	return c
 }
+
+pub fn (mut g Guide) edit_profile_list(mut profile db.Profile, settings_t db.Settings_T, acti_t db.Activity_T, mut itm db.Item, args ...string) bool
+{
+	for mut p in g.profiles {
+		if p == profile {
+			p.edit_list(settings_t, acti_t, mut itm, ...args)
+		}
+	}
+	return true
+}

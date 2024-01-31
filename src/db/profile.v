@@ -189,7 +189,7 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 	{
 		.add_to_invo {
 			p.invo << itm
-			p.activites << new_activity(acti_t, mut itm, args[0], current_time, p.activites.len+1, args[1], args[2])
+			p.activites << new_activity(acti_t, mut itm, "", current_time, p.activites.len+1, args[0])
 		}
 		.add_to_fs {
 			p.fs_list << FS{ posted_timestamp: current_time, fs_price: args[0], item: itm }
@@ -290,7 +290,7 @@ pub fn (mut p Profile) parse_activities(content string, line_n int) []Activity
 			activity_info := lines[i].split(",")
 			mut n_itm := Item{}
 			if activity_info.len > 6 { n_itm = new_item(activity_info[2..7]) }
-			println(lines[i])
+
 			match activity_info[1].trim_space()
 			{
 				"SOLD" {
@@ -311,6 +311,14 @@ pub fn (mut p Profile) parse_activities(content string, line_n int) []Activity
 				}
 				"LOGGED_IN" {
 					mut n := new_activity(Activity_T.logged_in, mut n_itm, "", activity_info[activity_info.len-1], new.len+1)
+					new << n
+				}
+				"FS_POSTED" {
+					mut n := new_activity(Activity_T.fs_posted, mut n_itm, activity_info[7], activity_info[activity_info.len-1], new.len+1, activity_info[activity_info.len-2], activity_info[activity_info.len-1])
+					new << n
+				}
+				"WTB_POSTED" {
+					mut n := new_activity(Activity_T.wtb_posted, mut n_itm, activity_info[7], activity_info[activity_info.len-1], new.len+1, activity_info[activity_info.len-2], activity_info[activity_info.len-1])
 					new << n
 				} else {}
 			}
@@ -416,28 +424,28 @@ pub fn (mut p Profile) list_to_str() string
 
 	for mut activity in p.activites 
 	{
-		data += "${activity.activity2str()}\n"
+		data += "${activity.activity2str()}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 	}
 
 	data += "[@INVENTORY]\n"
 
 	for mut invo_item in p.invo 
 	{
-		data += "${invo_item.item2api()}\n"
+		data += "${invo_item.item2api()}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 	}
 
 	data += "[@FS]\n"
 
 	for mut fs_item in p.fs_list 
 	{
-		data += "${fs_item.item.item2api()},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n"
+		data += "${fs_item.item.item2api()},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 	}
 
 	data += "[@WTB]\n"
 
 	for mut wtb_item in p.wtb_list 
 	{
-		data += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.seller_confirmation},${wtb_item.buyer_confirmation},${wtb_item.posted_timestamp}\n"
+		data += "${wtb_item.item.item2api()},${wtb_item.wtb_price},${wtb_item.seller_confirmation},${wtb_item.buyer_confirmation},${wtb_item.posted_timestamp}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 	}
 
 	return data

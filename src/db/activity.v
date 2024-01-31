@@ -40,6 +40,15 @@ pub fn activityt2str(act_t Activity_T) string
 		}
 		.price_change {
 			"price_change"
+		}
+		.logged_in {
+			"logged_in"
+		}
+		.fs_posted {
+			"fs_posted"
+		}
+		.wtb_posted {
+			"wtb_posted"
 		} else {}
 	}
 	return ""
