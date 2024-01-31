@@ -9,10 +9,13 @@
     discordID:
     facebook:
     facebookID:
+    bio: n/a
+    Badges:
 }
 
 [@ACCOUNT_SETTINGS]
 {
+    display_info: true
     display_badges: false
     display_worth: false
     display_invo: false

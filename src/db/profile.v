@@ -129,14 +129,6 @@ pub fn new_profile(p_content string) Profile
 	return p
 }
 
-pub fn (mut p Profile) is_manager() bool
-{
-	if Badges.admin in p.badges { return true }
-	else if Badges.owner in p.badges { return true }
-
-	return false
-}
-
 /*
 	pub fn (mut p Profile) edit_settings(setting_t Settings_T, new_data string) bool
 
@@ -244,6 +236,14 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 	return false
 }
 
+pub fn (mut p Profile) is_manager() bool
+{
+	if Badges.admin in p.badges { return true }
+	else if Badges.owner in p.badges { return true }
+
+	return false
+}
+
 pub fn (mut p Profile) parse_badges(line string) []Badges
 {
 	p.raw_badges = line.replace("Badges:", "").trim_space().split(",")
@@ -287,9 +287,10 @@ pub fn (mut p Profile) parse_activities(content string, line_n int) []Activity
 	{
 		if lines[i].trim_space() == "}" || lines[i].trim_space() == "" || lines[i].contains("}") { break }
 		if lines[i].contains("{") == false { 
-
 			activity_info := lines[i].split(",")
-			mut n_itm := new_item(activity_info[2..7])
+			mut n_itm := Item{}
+			if activity_info.len > 6 { n_itm = new_item(activity_info[2..7]) }
+			println(lines[i])
 			match activity_info[1].trim_space()
 			{
 				"SOLD" {
@@ -306,6 +307,10 @@ pub fn (mut p Profile) parse_activities(content string, line_n int) []Activity
 				}
 				"CHANGED" {
 					mut n := new_activity(Activity_T.price_change, mut n_itm, activity_info[7], activity_info[activity_info.len-1], new.len+1)
+					new << n
+				}
+				"LOGGED_IN" {
+					mut n := new_activity(Activity_T.logged_in, mut n_itm, "", activity_info[activity_info.len-1], new.len+1)
 					new << n
 				} else {}
 			}

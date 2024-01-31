@@ -47,7 +47,11 @@ pub fn activityt2str(act_t Activity_T) string
 
 pub fn (mut a Activity) activity2str() string
 {
-	mut activity_str := "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.price}','${a.timestamp}')"
+	mut activity_str := "('${a.i_idx},'${a.act_t}','${a.timestamp}')"
+
+	if a.item.name != "" {
+		activity_str = activity_str.replace("','${a.timestamp}", "','${a.item.item2profile()}','${a.price}','${a.timestamp}")
+	}
 
 	if "${a.act_t}" == "item_sold" || "${a.act_t}" == "item_bought" {
 		activity_str = activity_str.replace("${a.price}", "${a.price}','${a.seller_confirmation}','${a.buyer_confirmation}")

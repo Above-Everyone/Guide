@@ -63,6 +63,7 @@ pub enum Activity_T
 	item_bought		= 0x690002
 	item_viewed		= 0x690003
 	price_change	= 0x690004
+	logged_in 		= 0x690005
 }
 
 pub struct YW_INFO_PRICES

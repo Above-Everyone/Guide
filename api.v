@@ -38,16 +38,18 @@ pub fn (mut api API) stats() vweb.Result
 	// $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 	ip := api.form['HTTP_CF_CONNECTING_IP'] or { api.ip() }
 	t_ip := api.query['HTTP_CF_CONNECTING_IP'] or { api.ip() }
-	
-	mut item_c := 0
-	lock api.guide {
-		item_c = api.guide.item_c
-	}
 
 	search_count := src.read_log_db_count(src.Log_T._search)
 	change_count := src.read_log_db_count(src.Log_T._change)
+	
+	mut item_c := 0
+	mut admins := 0
+	lock api.guide {
+		item_c = api.guide.item_c
+		admins = api.guide.count_admins()
+	}
 
-	return api.text("${item_c},${search_count},${change_count}")
+	return api.text("${item_c},${search_count},${change_count},${admins}")
 }
 
 @['/search']

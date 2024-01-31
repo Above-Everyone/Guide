@@ -12,3 +12,15 @@ pub fn (mut g Guide) find_profile(username string) db.Profile
 
 	return db.Profile{}
 }
+
+pub fn (mut g Guide) count_admins() int
+{
+	mut c := 0
+	for mut profile in g.profiles
+	{
+		if profile.is_manager()
+		{ c++ }
+	}
+
+	return c
+}
