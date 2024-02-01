@@ -13,6 +13,7 @@ pub fn (mut g Guide) find_profile(username string) db.Profile
 			user.idx = c
 			return user 
 		}
+		c++
 	}
 
 	return db.Profile{}

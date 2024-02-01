@@ -253,7 +253,7 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 			mut c := 0
 			for mut invo_item in p.invo 
 			{
-				if invo_item.idx == itm.idx {
+				if invo_item.id == itm.id {
 					p.invo.delete(c)
 					check = true
 				}
@@ -327,15 +327,17 @@ pub fn (mut p Profile) save_profile() bool
 	if p.badges.len > 0 {
 
 		mut c := 0
-		for badge in p.badges {
-			if c == p.badges.len-1 {
+		for badge in p.badges 
+		{
+			if c == p.badges.len-1 
+			{
 				badges += "${badge2str(badge)}"
 			} else { badges += "${badge2str(badge)}," }
 			c++
 		}
 	}
 
-	db := data.replace("[@ACTIVITIES]", "\n[@ACTIVITIES]\n{").replace("[@INVENTORY]", "}\n\n[@INVENTORY]\n{").replace("[@FS]", "}\n\n[@FS]\n{").replace("[@WTB]", "}\n\n[@WTB]\n{").replace("Badges: n/a", "Badges: ${badges}")
+	db := data.replace("Badges: n/a", "Badges: ${badges}").replace("'", "").replace("(", "").replace(")", "")
 	os.write_file("db/profiles/${p.username}.gp", db) or { os.File{} }
 	return true
 }

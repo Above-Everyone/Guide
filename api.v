@@ -223,11 +223,10 @@ pub fn (mut api API) auth() vweb.Result
 	/* Validating User */
 	if user.username == username && user.password == password 
 	{
-		println("${utils.signal_colored(true)} Logged In | Profile Auth\n\t=> ${username} | ${username}\n\tIP: ${ip}")
+		println("${utils.signal_colored(true)} Logged In | Profile Auth\n\t=> ${username}\n\tIP: ${ip}")
 		lock api.guide {
 			current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
 			mut g := db.Item{}
-			println("${user.idx} ${api.guide.profiles[user.idx]} ${user.activites}")
 			api.guide.profiles[user.idx].activites << db.new_activity(db.Activity_T.logged_in, mut g, "", current_time, user.activites.len)
 		}
 		return api.text("${user.to_auth_str()}")
