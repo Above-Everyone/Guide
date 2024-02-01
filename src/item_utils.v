@@ -46,7 +46,11 @@ pub fn (mut g Guide) find_by_name() []db.Item
 	{
 		if item.name == g.query { found << item }
 
-		if g.advanced_match_name(item.name) {
+		if g.query.split(" ").len > 1 {
+			if g.advanced_match_name(item.name) {
+				found << item
+			}
+		} else if item.name.to_lower().contains(g.query) {
 			found << item
 		}
 	}
@@ -83,11 +87,28 @@ pub fn (mut g Guide) advanced_match_name(item_name string) bool
 	words_in_item_name := item_name.to_lower().split(" ")
 	words_in_search_name := g.query.to_lower().split(" ")
 
-	for word in words_in_item_name
+	mut signal := false
+
+	query_word_count := words_in_search_name.len
+	item_name_word_count := words_in_search_name.len
+
+	mut word_c := 0
+	for word in words_in_search_name
 	{
-		for search_word in words_in_search_name
-		{
-			if /*word.contains(search_word) ||*/ word.starts_with(search_word) || word.ends_with(search_word) { return true }
+		// for search_word in words_in_item_name
+		// {
+		// 	if word == search_word { word_c++ }
+		// 	// if word == search_word /*|| word.starts_with(search_word) || word.ends_with(search_word)*/ { signal = true }
+		// }
+
+		// if word_c == query_word_count { 
+		// 	println("${word_c} ${query_word_count} ${signal} ${item_name_word_count}")
+		// 	return true
+		// }
+		if item_name.to_lower().contains(word) || item_name.to_lower().starts_with(word) || item_name.to_lower().ends_with(word) { word_c++ }
+
+		if word_c == query_word_count {
+			return true
 		}
 	}
 

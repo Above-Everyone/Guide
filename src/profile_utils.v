@@ -5,9 +5,14 @@ import src.db
 pub fn (mut g Guide) find_profile(username string) db.Profile
 {
 	if username.len < 1 { return db.Profile{} }
-	for user in g.profiles 
+
+	mut c := 0
+	for mut user in g.profiles 
 	{
-		if user.username == username { return user }
+		if user.username == username {
+			user.idx = c
+			return user 
+		}
 	}
 
 	return db.Profile{}

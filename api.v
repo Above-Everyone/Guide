@@ -6,7 +6,7 @@ import rand
 
 import src
 import src.db
-import src.str_utils
+import src.utils
 
 pub struct API 
 {
@@ -78,17 +78,16 @@ pub fn (mut api API) search() vweb.Result
 	}
 
 	mut check_item := gd.search(query, false)
-	println("[ + ] New Search Log => ${query} ${user_ip}\nUser-Agent => ${agent}")
+	println("${utils.signal_colored(true)} New search | Item Search\n\t=> ${query} | ${check_item.r_type} | ${check_item.results.len}\n\tIP: ${user_ip}\n\tAgent: ${agent}")
 
 	/* Blocking Invalid User Searches */
 	if user_ip != website_backend && user_ip != website_backend_ipv6 {
-		println("${user_ip}")
 		src.new_log(src.App_T._site, src.Log_T._search, user_ip, query, src.result_t(check_item.r_type), "${check_item.results.len}")
 	}
 
 	/* Search Check */
 	if check_item.r_type == ._none {
-		println("[ X ] Error, No item was found for ${query}")
+		println("${utils.signal_colored(false)} No items found | Item Search\n\t=> ${query} | ${check_item.r_type} | ${check_item.results.len}\n\tIP: ${user_ip}\n\tAgent: ${agent}")
 		return api.text("[ X ] Error, No items found!")
 	} else if check_item.r_type == ._exact {
 		check_item.results[0].ywinfo_price_logs()
@@ -123,17 +122,18 @@ pub fn (mut api API) change_price() vweb.Result
 	if !profile.is_manager()
 	{
 		src.new_log(src.App_T._site, src.Log_T._suggestion, ip, "${item.id}", item.price, new_price)
-		println("[ X ] Warning, An unknown user (${ip}) has tried changing price of ${item.id}, from ${item.price} to ${new_price}...!")
+		println("${utils.signal_colored(true)} Admin Fail | Item Price Change\n\t=> ${item_id} | ${new_price} | ${user}\n\tIP: ${ip}")
 		return api.text("[ X ] Error, You aren't a manager to change price. Price has been suggested to admins to investigate....")
 	}
 
 	mut check := gd.change_price(mut item, new_price, ip)
 
 	if !check {
-		println("[ X ] Error, failed to change price on ${item.id} ${new_price}...!")
+		println("${utils.signal_colored(true)} Failed Price Change | Item Price Change\n\t=> ${item_id} | ${new_price} | ${user}\n\tIP: ${ip}")
 		return api.text("[ X ] Error, failed to change price on ${item.id} ${new_price}...!")
 	}
 
+	println("${utils.signal_colored(true)} Changed Price | Item Price Change\n\t=> ${item_id} | ${new_price} | ${user}\n\tIP: ${ip}")
 	return api.text("[ + ] ${item.name}'s price has been successfully updated to ${item.price}...!\n${item.item2api()}")
 }
 
@@ -167,7 +167,36 @@ pub fn (mut api API) save_end() vweb.Result
 {
 	lock api.guide { api.guide.save_db() }
 
+	println("${utils.signal_colored(true)} Database has been saved....!")
 	return api.text("Database saved!")
+}
+
+/*
+	View Profile Using Username Endpoint
+*/
+@['/profile']
+pub fn (mut api API) profile() vweb.Result
+{
+	// ip := api.query['ip'] or { api.ip() }
+	// if ip != website_backend && ip != website_backend_ipv6 {
+	// 	return api.text("This endpoint is for YoMarket WebSite Only!")
+	// }
+
+	username 	:= api.query['username'] or { "" }
+	ip 			:= api.query['ip'] or { "" }
+
+	mut gd := src.Guide{}
+	lock api.guide { gd = api.guide }
+
+	mut user := gd.find_profile(username)
+
+	if user.username == "" {
+		println("${utils.signal_colored(false)} Invalid username | Profile View\n\t=> ${username}\n\tIP: ${ip}")
+		return api.text("[ X ] Error, Invalid information provided....!")
+	}
+
+	println("${utils.signal_colored(true)} Viewed | Profile View\n\t=> ${username}\n\tIP: ${ip}")
+	return api.text(user.to_api())
 }
 
 /*
@@ -185,44 +214,62 @@ pub fn (mut api API) auth() vweb.Result
 	mut gd := src.Guide{}
 	lock api.guide { gd = api.guide }
 
+	if username == "" || password == "" { 
+		return api.text("[ X ] Error, Missing GET parameters")
+	}
+
 	mut user := gd.find_profile(username)
 
 	/* Validating User */
 	if user.username == username && user.password == password 
 	{
-		current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
-		mut g := db.Item{}
-		user.activites << db.new_activity(db.Activity_T.logged_in, mut g, "", current_time, user.activites.len)
+		println("${utils.signal_colored(true)} Logged In | Profile Auth\n\t=> ${username} | ${username}\n\tIP: ${ip}")
+		lock api.guide {
+			current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
+			mut g := db.Item{}
+			println("${user.idx} ${api.guide.profiles[user.idx]} ${user.activites}")
+			api.guide.profiles[user.idx].activites << db.new_activity(db.Activity_T.logged_in, mut g, "", current_time, user.activites.len)
+		}
 		return api.text("${user.to_auth_str()}")
 	}
 
-	// Log action
+	
+	println("${utils.signal_colored(false)} Invalid info | Profile Auth\n\t=> ${username} | ${password}\n\tIP: ${ip}")
 	return api.text("[ X ] Error, Invalid information provided!")
 }
 
-/*
-	View Profile Using Username Endpoint
-*/
-@['/profile']
-pub fn (mut api API) profile() vweb.Result
+@['/profile/create']
+pub fn (mut api API) profile_creation() vweb.Result
 {
-	// ip := api.query['ip'] or { api.ip() }
-	// if ip != website_backend && ip != website_backend_ipv6 {
-	// 	return api.text("This endpoint is for YoMarket WebSite Only!")
-	// }
+	username 		:= api.query['username'] or { "" }
+	password 		:= api.query['password'] or { "" }
+	yoworld_id		:= api.query['id'] or { "" }
+	extra_info 		:= api.query['extra'] or { "" }
+	ip 				:= api.query['ip'] or { api.ip() }
+	mut gd 			:= src.Guide{}
 
-	username 	:= api.query['username'] or { "" }
-
-	mut gd := src.Guide{}
 	lock api.guide { gd = api.guide }
 
-	mut user := gd.find_profile(username)
-
-	if user.username == "" {
-		return api.text("[ X ] Error, Invalid information provided....!")
+	if username == "" || password == "" || yoworld_id == "" {
+		return api.text("[ X ] Error, Missing GET parameters")
 	}
 
-	return api.text(user.to_api())
+	mut profile_check := gd.find_profile(username)
+	if profile_check.username != "" {
+		println("${utils.signal_colored(false)} Invalid user creation attempt\n\t=> ${username} | ${password} | ${yoworld_id} | ${extra_info}\n\tIP: ${ip}")
+		return api.text("[ X ] Error, Cannot create account with username ${username}! Username is already taken...!")
+	}
+
+	profile_info 	:= extra_info.split(",")
+	mut profile 	:= db.create_profile(username, password, ip, yoworld_id, ...profile_info)
+	if profile.username == username {
+		lock api.guide { api.guide.profiles << profile }
+		println("${utils.signal_colored(true)} Account created\n\t=> ${username} | ${yoworld_id} | ${extra_info}\n\tIP: ${ip}")
+		return api.text("[ + ] Account created....!${profile.to_api()}")
+	}
+
+	println("${utils.signal_colored(false)} Invalid info | Profile creation attemp\n\t=> ${username} | ${yoworld_id} | ${extra_info}\n\tIP: ${ip}")
+	return api.text("[ X ] Invalid operation")
 }
 
 /*
@@ -237,6 +284,7 @@ pub fn (mut api API) edit_add_list() vweb.Result
 	item_id		:= api.query['id'] or { "" }
 	price 		:= api.query['price'] or { "" }
 	list 		:= api.query['list'] or { "" }
+	ip 			:= api.query['ip'] or { "" }
 
 	if username == "" || password == "" || item_id == "" || list == "" {
 		return api.text("[ X ] Error, Missing parameters....!")
@@ -250,6 +298,7 @@ pub fn (mut api API) edit_add_list() vweb.Result
 
 	if !(profile.username == username && profile.password == password)
 	{
+		println("${utils.signal_colored(false)} Invalid info | Profile list edit attempt\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
 		return api.text("[ X ] Error, Invalid information provided....!")
 	}
 
@@ -257,6 +306,7 @@ pub fn (mut api API) edit_add_list() vweb.Result
 	mut fs_item := item_check.results[0]
 	
 	if item_check.r_type != ._exact {
+		println("${utils.signal_colored(false)} Invalid item ID | Profile list edit attempt\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
 		return api.text("[ X ] Invalid item ID....!")
 	}
 
@@ -266,7 +316,10 @@ pub fn (mut api API) edit_add_list() vweb.Result
     		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.add_to_fs, db.Activity_T.fs_posted, mut fs_item, price, "false", "false")
 		}
 		"wtb" {
-			if price == "" { return api.text("[ X ] Error, Missing parameters....!") }
+			if price == "" { 
+				println("${utils.signal_colored(false)} Invalid price | Profile list edit attempt\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
+				return api.text("[ X ] Error, Missing parameters....!") 
+			}
     		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.add_to_wtb, db.Activity_T.wtb_posted, mut fs_item, price, "false", "false")
 		}
 		"invo" {
@@ -275,9 +328,11 @@ pub fn (mut api API) edit_add_list() vweb.Result
 	}
 
 	if edit_check {
+		println("${utils.signal_colored(true)} Item Added | Profile list edit\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
 		return api.text("[ + ] Item added!")
 	}
 
+	println("${utils.signal_colored(false)} Invalid operation | Profile list edit\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
 	return api.text("[ X ] Invalid operation....!")
 }
 

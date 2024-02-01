@@ -2,13 +2,14 @@ module db
 
 import os
 import time
-import src.str_utils
+import src.utils
 
 pub struct Profile 
 {
 	pub mut:
 		username			string
 		password			string
+		ip					string
 
 		yoworld				string
 		yoworld_id			int
@@ -34,6 +35,7 @@ pub struct Profile
 		invo 				[]Item
 		fs_list				[]FS
 		wtb_list			[]WTB
+		idx 				int
 }
 
 /*
@@ -63,6 +65,48 @@ pub fn create(args ...string) Profile
 	return p
 }
 
+pub fn create_profile(uname string, pword string, ip string, ywid string, args ...string) Profile 
+{
+	mut new_db_formart 	:= os.read_file("db/profiles/example.gp") or { "" }
+
+	if new_db_formart == "" {
+		println("[ X ] Error, Corrupted DB Format => db/profiles/example.gp")
+		return Profile{}
+	}
+
+	mut new_p 			:= new_profile(new_db_formart)
+	mut extra_settings 	:= [new_p.yoworld, new_p.discord, new_p.facebook, new_p.facebook_id]
+
+	new_p.username 		= uname
+	new_p.password 		= pword
+	new_p.ip 			= ip
+	new_p.yoworld_id  	= ywid.int()
+
+	println("${args.len} ${args}")
+	if args.len > 1 {
+		for i, mut arg in extra_settings
+		{
+			println("${i} ${arg} ${args[i]}")
+			arg = args[i]
+		}
+	}
+
+	mapp := {
+		"username:": uname,
+		"password:": pword,
+		"ip:": ip,
+		"yoworldID:": ywid
+	}
+
+	for settin, val in mapp {
+		new_db_formart = new_db_formart.replace("${settin}", "${settin} ${val}")
+	}
+
+	os.write_file("db/profiles/${new_p.username}.gp", new_db_formart) or { os.File{} }
+
+	return new_p
+}
+
 pub fn new_profile(p_content string) Profile
 {
 	if p_content.len < 1 { return Profile{} }
@@ -78,49 +122,49 @@ pub fn new_profile(p_content string) Profile
 		line_arg := line.trim_space().split(":")
 		match line 
 		{
-			str_utils.match_starts_with(line, "username:") {
+			utils.match_starts_with(line, "username:") {
 				if line_arg.len > 0 { p.username = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "password:") {
+			utils.match_starts_with(line, "password:") {
 				if line_arg.len > 0 { p.password = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "yoworld:") {
+			utils.match_starts_with(line, "yoworld:") {
 				if line_arg.len > 0 { p.yoworld = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "yoworldID:") {
+			utils.match_starts_with(line, "yoworldID:") {
 				if line_arg.len > 0 { p.yoworld_id = line_arg[1].trim_space().int() }
 			}
-			str_utils.match_starts_with(line, "netWorth:") {
+			utils.match_starts_with(line, "netWorth:") {
 				if line_arg.len > 0 { p.net_worth = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "discord:") {
+			utils.match_starts_with(line, "discord:") {
 				if line_arg.len > 0 { p.discord = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "discordID:") {
+			utils.match_starts_with(line, "discordID:") {
 				if line_arg.len > 0 { p.discord_id = line_arg[1].trim_space().i64() }
 			}
-			str_utils.match_starts_with(line, "facebook:") {
+			utils.match_starts_with(line, "facebook:") {
 				if line_arg.len > 0 { p.facebook = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "facebookID:") {
+			utils.match_starts_with(line, "facebookID:") {
 				if line_arg.len > 0 { p.facebook_id = line_arg[1].trim_space() }
 			}
-			str_utils.match_starts_with(line, "display_info:") {
+			utils.match_starts_with(line, "display_info:") {
 				p.display_info = line_arg[1].trim_space().bool()
 			}
-			str_utils.match_starts_with(line, "Badges: ") {
+			utils.match_starts_with(line, "Badges: ") {
 				p.badges = p.parse_badges(line)
 			}
-			str_utils.match_starts_with(line, "[@ACTIVITIES]") {
+			utils.match_starts_with(line, "[@ACTIVITIES]") {
 				p.activites = p.parse_activities(p_content, line_c)
 			}
-			str_utils.match_starts_with(line, "[@INVENTORY]") {
+			utils.match_starts_with(line, "[@INVENTORY]") {
 				p.invo = p.parse_invo(p_content, line_c)
 			}
-			str_utils.match_starts_with(line, "[@FS]") {
+			utils.match_starts_with(line, "[@FS]") {
 				p.fs_list = p.parse_fs(p_content, line_c)
 			}
-			str_utils.match_starts_with(line, "[@WTB]") {
+			utils.match_starts_with(line, "[@WTB]") {
 				p.wtb_list = p.parse_wtb(p_content, line_c)
 			} else {}
 		}
@@ -517,31 +561,31 @@ pub fn (mut p Profile) list_to_str() string
 
 	for mut activity in p.activites 
 	{
-		data += "${activity.activity2str()}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
+		data += "${activity.activity2str()}\n"
 	}
 
 	data += "[@INVENTORY]\n"
 
 	for mut invo_item in p.invo 
 	{
-		data += "${invo_item.to_db()}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
+		data += "${invo_item.to_db()}\n"
 	}
 
 	data += "[@FS]\n"
 
 	for mut fs_item in p.fs_list 
 	{
-		data += "${fs_item.item.item2profile()},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
+		data += "${fs_item.item.item2profile()},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n"
 	}
 
 	data += "[@WTB]\n"
 
 	for mut wtb_item in p.wtb_list 
 	{
-		data += "${wtb_item.item.item2profile()},${wtb_item.wtb_price},${wtb_item.seller_confirmation},${wtb_item.buyer_confirmation},${wtb_item.posted_timestamp}\n".replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
+		data += "${wtb_item.item.item2profile()},${wtb_item.wtb_price},${wtb_item.seller_confirmation},${wtb_item.buyer_confirmation},${wtb_item.posted_timestamp}\n"
 	}
 
-	return data
+	return data.replace("'", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 }
 
 pub fn (mut p Profile) to_str() string
