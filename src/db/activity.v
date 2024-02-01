@@ -1,5 +1,29 @@
 module db
 
+pub enum Activity_T 
+{
+	null 			= 0x690000
+
+	/* TRADING ACTIONS */
+	item_sold 		= 0x690001
+	item_bought		= 0x690002
+	item_viewed		= 0x690003
+
+	/* MISC ACTIONS */
+	price_change	= 0x690004
+	logged_in 		= 0x690005
+
+	/* POSTING ACTIONS */
+	fs_posted		= 0x690006
+	wtb_posted		= 0x690007
+	invo_posted		= 0x690008
+
+	/* RM ACTIONS */
+	fs_rm			= 0x690009
+	wtb_rm			= 0x690010
+	invo_rm			= 0x690011
+}
+
 pub struct Activity 
 {
 	pub mut:
@@ -16,7 +40,10 @@ pub struct Activity
 
 pub fn new_activity(actt Activity_T, mut itm Item, p string, t string, idx int, args ...string) Activity
 {
-	mut act := Activity{i_idx: idx, act_t: actt, item: itm, price: p, timestamp: t}
+	mut act := Activity{i_idx: idx, act_t: actt, timestamp: t}
+
+	if p != "" { act.price = p }
+	if itm.name != "" { act.item = itm }
 
 	if args.len == 2 {
 		act.seller_confirmation = args[0].bool()
@@ -49,6 +76,41 @@ pub fn activityt2str(act_t Activity_T) string
 		}
 		.wtb_posted {
 			"wtb_posted"
+		}
+		.invo_posted {
+			"invo_posted"
+		} else {}
+	}
+	return ""
+}
+
+pub fn activityt2db(act_t Activity_T) string 
+{
+	match act_t
+	{
+		.item_sold {
+			"SOLD"
+		}
+		.item_bought {
+			"BOUGHT"
+		}
+		.item_viewed {
+			"VIEWED"
+		}
+		.price_change {
+			"CHANGE"
+		}
+		.logged_in {
+			"LOGGED_IN"
+		}
+		.fs_posted {
+			"FS_POSTED"
+		}
+		.wtb_posted {
+			"WTB_POSTED"
+		}
+		.invo_posted {
+			"INVO_POSTED"
 		} else {}
 	}
 	return ""
@@ -59,11 +121,27 @@ pub fn (mut a Activity) activity2str() string
 	mut activity_str := "('${a.i_idx},'${a.act_t}','${a.timestamp}')"
 
 	if a.item.name != "" {
-		activity_str = activity_str.replace("','${a.timestamp}", "','${a.item.item2profile()}','${a.price}','${a.timestamp}")
+		activity_str = "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.timestamp}')"
 	}
 
-	if "${a.act_t}" == "item_sold" || "${a.act_t}" == "item_bought" {
-		activity_str = activity_str.replace("${a.price}", "${a.price}','${a.seller_confirmation}','${a.buyer_confirmation}")
+	if "${a.act_t}" == "item_sold" || "${a.act_t}" == "item_bought" || "${a.act_t}" == "fs_posted" || "${a.act_t}" == "wtb_posted" {
+		activity_str = "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.price}','${a.seller_confirmation}','${a.buyer_confirmation}','${a.timestamp}')"
 	}
+
+	return activity_str
+}
+
+pub fn (mut a Activity) activity2db() string
+{
+	mut activity_str := "('${a.i_idx},'${a.act_t}','${a.timestamp}')"
+
+	if a.item.name != "" {
+		activity_str = "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.timestamp}')"
+	}
+
+	if "${a.act_t}" == "item_sold" || "${a.act_t}" == "item_bought" || "${a.act_t}" == "fs_posted" || "${a.act_t}" == "wtb_posted" {
+		activity_str = "('${a.i_idx},'${activityt2db(a.act_t)}','${a.item.item2profile()}','${a.price}','${a.seller_confirmation}','${a.buyer_confirmation}','${a.timestamp}')"
+	}
+
 	return activity_str
 }

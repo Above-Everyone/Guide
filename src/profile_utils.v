@@ -30,6 +30,7 @@ pub fn (mut g Guide) edit_profile_list(mut profile db.Profile, settings_t db.Set
 	for mut p in g.profiles {
 		if p == profile {
 			p.edit_list(settings_t, acti_t, mut itm, ...args)
+			p.save_profile()
 		}
 	}
 	return true

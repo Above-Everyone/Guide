@@ -46,7 +46,7 @@ pub fn (mut g Guide) find_by_name() []db.Item
 	{
 		if item.name == g.query { found << item }
 
-		if item.name.to_lower().contains(g.query) {
+		if g.advanced_match_name(item.name) {
 			found << item
 		}
 	}
@@ -87,7 +87,7 @@ pub fn (mut g Guide) advanced_match_name(item_name string) bool
 	{
 		for search_word in words_in_search_name
 		{
-			if word.contains(search_word) || word.starts_with(search_word) || word.ends_with(search_word) { return true }
+			if /*word.contains(search_word) ||*/ word.starts_with(search_word) || word.ends_with(search_word) { return true }
 		}
 	}
 

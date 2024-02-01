@@ -190,9 +190,7 @@ pub fn (mut api API) auth() vweb.Result
 	/* Validating User */
 	if user.username == username && user.password == password 
 	{
-		current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
-		mut g := db.Item{}
-		user.activites << db.new_activity(db.Activity_T.logged_in, mut g, "", current_time, user.activites.len)
+		// Log action
 		return api.text("${user.to_auth_str()}")
 	}
 
@@ -321,10 +319,10 @@ pub fn (mut api API) edit_rm_list() vweb.Result
     		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.rm_from_fs, db.Activity_T.fs_rm, mut fs_item, "0")
 		}
 		"wtb" {
-    		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.rm_from_wtb, db.Activity_T.wtb_rm, mut fs_item, "0")
+    		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.rm_from_wtb, db.Activity_T.wtb_rm, mut mut fs_item, "0")
 		}
 		"invo" {
-    		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.rm_from_invo, db.Activity_T.invo_rm, mut fs_item, "0")
+    		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.rm_from_invo, db.Activity_T.invo_rm, mut mut fs_item, "0")
 		} else {}
 	}
 

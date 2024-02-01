@@ -40,34 +40,6 @@ pub enum List_T
 	rm_wtb		= 0x00105
 }
 
-pub enum Badges 
-{
-	null = 0x00201
-	verified = 0x00202
-	trusted = 0x00203
-	reputation = 0x00204
-
-	admin = 0x00205
-	owner = 0x00206
-
-	// crew
-	ae = 0x00207
-	pnkm = 0x00208
-	nmdz = 0x00209
-}
-
-pub enum Activity_T 
-{
-	null 			= 0x690000
-	item_sold 		= 0x690001
-	item_bought		= 0x690002
-	item_viewed		= 0x690003
-	price_change	= 0x690004
-	logged_in 		= 0x690005
-	fs_posted		= 0x690006
-	wtb_posted		= 0x690007
-}
-
 pub struct YW_INFO_PRICES
 {
 	pub mut:
