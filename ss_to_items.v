@@ -11,34 +11,45 @@ fn main()
 
 	for i, line in template_data
 	{
+		/* Skip Lines Not Needed Or Empty Lines */
 		if line.trim_space().len < 2 || line.trim_space() == "" { continue }
+
+		/* Removing Junk Characters and Splitting Lines for junk removal */
 		fixed_name := line.replace("<", "").replace(">", "").replace("_", "").replace("@", "").replace("/", "").replace("~", "").replace("-", "").replace("(", "").replace(")", "")
+		line_info := line.split(" ")
 
-		// mut r := guide.search(fixed_name, false)
+		/* Check for item with current line data */
+		guide.query = fixed_name // Setting the search query
+		mut r := guide.find_by_name() // Looking through items to match
 
-		guide.query = fixed_name
-		mut r := guide.find_by_name()
-
-		// println("${i} | ${fixed_name}${template_data[i+1]}")
-		if (r.len == 0 || r.len > 1) && (i != template_data.len || i != template_data.len-1) {
-			// r = guide.search("${fixed_name} ${template_data[i+1]}", false)
+		/* Sometimes the end of item name end up in the next line so 
+		   putting them together for more checking */
+		if (r.len == 0 || r.len > 1) && i != template_data.len-1 {
 			guide.query = "${fixed_name} ${template_data[i+1]}"
 			r = guide.find_by_name()
+
+			/* Rechecking removing the Price from the end of line to recheck */
+			if r.len == 0 || r.len > 1 {
+				if line_info.len > 1 {
+					guide.query = "${fixed_name}".replace(" ${line_info[line_info.len-1]}", "")
+					r = guide.find_by_name()
+				}
+			}
 		}
 
-		if r.len == 1 {
+		/* Item found, Ask user for new price to set or skips if no price was provided */
+		if r.len == 1 && r[0].is_item_valid() {
 			println("${utils.signal_colored(true)} Item Found! => ${r[0].to_db()}")
 			price := os.input("New Price: ")
-			if price == "" { continue }
-			new_price := guide.change_price(mut r[0], price, "5.5.5.5")
+			if price != "" {
+				new_price := guide.change_price(mut r[0], price, "5.5.5.5")
+			}
 		}
-
-		// if is_price_validate(fixed_name) or { false } {
-		// 	println("${utils.signal_colored(true)} Price Found! => ${line}")
-		// }
 	}
-
+	
+	println("${utils.signal_colored(true)} Item found were all completely updated. Saving db.....!")
 	guide.save_db()
+	println("${utils.signal_colored(true)} Saved...!")
 }
 
 fn is_price_validate(price string) !bool

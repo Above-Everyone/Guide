@@ -35,6 +35,15 @@ pub struct Item
 		yw_info_prices	[]YW_INFO_PRICES
 }
 
+pub fn (mut i Item) is_item_valid() bool
+{
+	if i.name != "" || i.id > 0 {
+		return true
+	}
+
+	return false
+}
+
 /*
 	[DOC]
         pub fn new_item(arr []string) Item
