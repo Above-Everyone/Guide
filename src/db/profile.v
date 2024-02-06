@@ -67,10 +67,10 @@ pub fn create(args ...string) Profile
 
 pub fn create_profile(uname string, pword string, ip string, ywid string, args ...string) Profile 
 {
-	mut new_db_formart 	:= os.read_file("db/profiles/example.gp") or { "" }
+	mut new_db_formart 	:= os.read_file("assets/db/profiles/example.gp") or { "" }
 
 	if new_db_formart == "" {
-		println("[ X ] Error, Corrupted DB Format => db/profiles/example.gp")
+		println("[ X ] Error, Corrupted DB Format => assets/db/profiles/example.gp")
 		return Profile{}
 	}
 
@@ -102,7 +102,7 @@ pub fn create_profile(uname string, pword string, ip string, ywid string, args .
 		new_db_formart = new_db_formart.replace("${settin}", "${settin} ${val}")
 	}
 
-	os.write_file("db/profiles/${new_p.username}.gp", new_db_formart) or { os.File{} }
+	os.write_file("assets/db/profiles/${new_p.username}.gp", new_db_formart) or { os.File{} }
 
 	return new_p
 }
@@ -239,12 +239,13 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 			return true
 		}
 		.add_to_fs {
-			p.fs_list << FS{ posted_timestamp: current_time, fs_price: args[0], item: itm }
+			println("ITEM ADDED FS")
+			p.fs_list << FS{ posted_timestamp: current_time, fs_price: args[0], item: itm, seller_confirmation: args[1], buyer_confirmation: args[2] }
 			p.activites << new_activity(acti_t, mut itm, args[0], current_time, p.activites.len+1, args[1], args[2])
 			return true
 		}
 		.add_to_wtb {
-			p.wtb_list << WTB{ posted_timestamp: current_time, wtb_price: args[0], item: itm }
+			p.wtb_list << WTB{ posted_timestamp: current_time, wtb_price: args[0], item: itm, seller_confirmation: args[1], buyer_confirmation: args[2]}
 			p.activites << new_activity(acti_t, mut itm, args[0], current_time, p.activites.len+1, args[1], args[2])
 			return true
 		}
@@ -265,14 +266,15 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 
 		}
 		.rm_from_fs {
-
+			println("ITEM REMOVED FROM FS")
 			mut c := 0
 			for mut fs_item in p.fs_list 
 			{
-				if fs_item.item.idx == itm.idx {
+				if fs_item.item.id == itm.id {
 					p.fs_list.delete(c)
 					check = true
 				}
+				c++
 			}
 
 			if check {
@@ -284,7 +286,7 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 			mut c := 0
 			for mut wtb_item in p.wtb_list 
 			{
-				if wtb_item.item.idx == itm.idx {
+				if wtb_item.item.id == itm.id {
 					p.wtb_list.delete(c)
 					check = true
 				}
@@ -316,12 +318,12 @@ pub fn (mut p Profile) save_profile() bool
 	data += "}\n\n[@FS]\n{\n"
 
 	for mut fs_item in p.fs_list 
-	{ data += "${fs_item.item.item2profile()},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n" }
+	{ data += "${fs_item.item.item2profile()},${fs_item.fs_price},${fs_item.seller_confirmation.str()},${fs_item.buyer_confirmation.str()},${fs_item.posted_timestamp}\n" }
 
 	data += "}\n\n[@WTB]\n{\n"
 
 	for mut wtb_item in p.wtb_list 
-	{ data += "${wtb_item.item.item2profile()},${wtb_item.wtb_price},${wtb_item.seller_confirmation},${wtb_item.buyer_confirmation},${wtb_item.posted_timestamp}\n" }
+	{ data += "${wtb_item.item.item2profile()},${wtb_item.wtb_price},${wtb_item.seller_confirmation.str()},${wtb_item.buyer_confirmation.str()},${wtb_item.posted_timestamp}\n" }
 
 	mut badges := ""
 	if p.badges.len > 0 {
@@ -338,7 +340,7 @@ pub fn (mut p Profile) save_profile() bool
 	}
 
 	db := data.replace("Badges: n/a", "Badges: ${badges}").replace("'", "").replace("(", "").replace(")", "")
-	os.write_file("db/profiles/${p.username}.gp", db) or { os.File{} }
+	os.write_file("assets/db/profiles/${p.username}.gp", db) or { os.File{} }
 	return true
 }
 

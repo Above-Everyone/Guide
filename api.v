@@ -44,13 +44,13 @@ pub fn (mut api API) stats() vweb.Result
 	change_count := src.read_log_db_count(src.Log_T._change)
 	
 	mut item_c := 0
-	mut admins := 0
+	mut users := 0
 	lock api.guide {
 		item_c = api.guide.item_c
-		admins = api.guide.count_admins()
+		users = api.guide.profiles.len
 	}
 
-	return api.text("${item_c},${search_count},${change_count},${admins}")
+	return api.text("${item_c},${search_count},${change_count},${users}")
 }
 
 @['/search']
@@ -137,12 +137,49 @@ pub fn (mut api API) change_price() vweb.Result
 	return api.text("[ + ] ${item.name}'s price has been successfully updated to ${item.price}...!\n${item.item2api()}")
 }
 
+@['/template']
+pub fn (mut api API) template_creator() vweb.Result
+{
+	items 		:= api.query['items'] or { "" }
+	username 	:= api.query['username'] or { "" }
+	ip 			:= api.query['ip'] or { "" }
+
+	if items == "" || username == "" {
+		println("${utils.signal_colored(false)} No info provided | Template Creator\n\t=> ${items} | ${username}\n\t${ip}")
+		return api.text("[ X ] Invalid info provided....!")
+	}
+
+	mut check := false
+	lock api.guide
+	{ check = api.guide.generate_template(items, username) }
+
+	if check  {
+		println("${utils.signal_colored(true)} Template Created | Template Creator\n\t=> ${items} | ${username}\n\t${ip}")
+		return api.text("[ + ] Template created....!")
+	}
+
+	println("${utils.signal_colored(false)} Invalid operation | Template Creator\n\t=> ${items} | ${username}\n\t${ip}")
+	return api.text("Invalid operation!")
+}
+
+@['/get_template']
+pub fn (mut api API) get_template() vweb.Result
+{
+	template_name := api.query['name'] or { "" }
+
+	if !os.exists("assets/templates/${template_name}.png") {
+		return api.text("[ X ] Error, No template found!")
+	}
+	
+	return api.file("template.png")
+}
+
 @['/price_logs']
 pub fn (mut api API) price_logs() vweb.Result
 {
 	ip := api.query['ip'] or { api.ip() }
 	
-	changes 	:= os.read_lines("logs/changes.log") or { [] }
+	changes 	:= os.read_lines("assets/logs/changes.log") or { [] }
 	total 		:= changes.len
 	mut last 	:= changes.clone()
 	
@@ -346,6 +383,7 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 	password 	:= api.query['password'] or { "" }
 	item_id		:= api.query['id'] or { "" }
 	list 		:= api.query['list'] or { "" }
+	ip			:= api.query['ip'] or { "" }
 
 	if username == "" || password == "" || item_id == "" || list == "" {
 		return api.text("[ X ] Error, Missing parameters....!")
@@ -359,6 +397,7 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 
 	if !(profile.username == username && profile.password == password)
 	{
+		println("${utils.signal_colored(false)} Invalid Info | Profile list removal edit\n\t=> ${username} | ${password} | ${item_id} | ${list}\n\tIP: ${ip}")
 		return api.text("[ X ] Error, Invalid information provided....!")
 	}
 
@@ -366,8 +405,11 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 	mut fs_item := item_check.results[0]
 	
 	if item_check.r_type != ._exact || "${fs_item.id}" != "${item_id}" {
+		println("${utils.signal_colored(false)} Invalid item ID | Profile list removal edit\n\t=> ${username} | ${password} | ${item_id} | ${list}\n\tIP: ${ip}")
 		return api.text("[ X ] Invalid item ID....!")
 	}
+
+	
 
 	match list 
 	{
@@ -383,8 +425,10 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 	}
 
 	if edit_check {
+		println("${utils.signal_colored(true)} Item Removed | Profile list removal edit\n\t=> ${username} | ${password} | ${item_id} | ${list}\n\tIP: ${ip}")
 		return api.text("[ + ] Item added!")
 	}
 
+	println("${utils.signal_colored(false)} Invalid operation | Profile list removal edit\n\t=> ${username} | ${password} | ${item_id} | ${list}\n\tIP: ${ip}")
 	return api.text("[ X ] Invalid operation....!")
 }

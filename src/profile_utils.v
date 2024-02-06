@@ -1,5 +1,7 @@
 module src
 
+import os
+
 import src.db
 
 pub fn (mut g Guide) find_profile(username string) db.Profile
@@ -37,7 +39,30 @@ pub fn (mut g Guide) edit_profile_list(mut profile db.Profile, settings_t db.Set
 		if p == profile {
 			p.edit_list(settings_t, acti_t, mut itm, ...args)
 			p.save_profile()
+			return true
 		}
 	}
-	return true
+
+	return false
+}
+
+pub fn (mut g Guide) get_latest_actions() 
+{
+
+}
+
+pub fn (mut g Guide) generate_template(items string, username string) bool
+{
+	os.write_file("assets/generator/template_data.txt", "${items}\n${username}") or { return false }
+	output := os.execute("start assets/generator/generate_template.py").output
+
+	println(output)
+
+	if(os.exists("template.png"))
+	{
+		os.mv("template.png", "assets/templates/${username}.png", os.MvParams{overwrite: true}) or { 0 }
+		return true 
+	}
+
+	return false
 }

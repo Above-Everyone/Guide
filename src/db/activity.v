@@ -89,28 +89,28 @@ pub fn activityt2db(act_t Activity_T) string
 	match act_t
 	{
 		.item_sold {
-			"SOLD"
+			return "SOLD"
 		}
 		.item_bought {
-			"BOUGHT"
+			return "BOUGHT"
 		}
 		.item_viewed {
-			"VIEWED"
+			return "VIEWED"
 		}
 		.price_change {
-			"CHANGE"
+			return "CHANGE"
 		}
 		.logged_in {
-			"LOGGED_IN"
+			return "LOGGED_IN"
 		}
 		.fs_posted {
-			"FS_POSTED"
+			return "FS_POSTED"
 		}
 		.wtb_posted {
-			"WTB_POSTED"
+			return "WTB_POSTED"
 		}
 		.invo_posted {
-			"INVO_POSTED"
+			return "INVO_POSTED"
 		} else {}
 	}
 	return ""
@@ -125,7 +125,7 @@ pub fn (mut a Activity) activity2str() string
 	}
 
 	if "${a.act_t}" == "item_sold" || "${a.act_t}" == "item_bought" || "${a.act_t}" == "fs_posted" || "${a.act_t}" == "wtb_posted" {
-		activity_str = "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.price}','${a.seller_confirmation}','${a.buyer_confirmation}','${a.timestamp}')"
+		activity_str = "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.price}','${a.seller_confirmation.str()}','${a.buyer_confirmation.str()}','${a.timestamp}')"
 	}
 
 	return activity_str
@@ -133,14 +133,16 @@ pub fn (mut a Activity) activity2str() string
 
 pub fn (mut a Activity) activity2db() string
 {
-	mut activity_str := "('${a.i_idx},'${a.act_t}','${a.timestamp}')"
+	c := activityt2db(a.act_t)
+	println("${a.act_t} ${c}")
+	mut activity_str := "('${a.i_idx},'${c}','${a.timestamp}')"
 
 	if a.item.name != "" {
-		activity_str = "('${a.i_idx},'${a.act_t}','${a.item.item2profile()}','${a.timestamp}')"
+		activity_str = "('${a.i_idx},'${c}','${a.item.item2profile()}','${a.timestamp}')"
 	}
 
 	if "${a.act_t}" == "item_sold" || "${a.act_t}" == "item_bought" || "${a.act_t}" == "fs_posted" || "${a.act_t}" == "wtb_posted" {
-		activity_str = "('${a.i_idx},'${activityt2db(a.act_t)}','${a.item.item2profile()}','${a.price}','${a.seller_confirmation}','${a.buyer_confirmation}','${a.timestamp}')"
+		activity_str = "('${a.i_idx},'${c}','${a.item.item2profile()}','${a.price}','${a.seller_confirmation.str()}','${a.buyer_confirmation.str()}','${a.timestamp}')"
 	}
 
 	return activity_str

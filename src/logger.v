@@ -5,15 +5,14 @@ import time
 import net.http
 
 pub const (
-    search_filepath      = "logs/searches.log"
-    changes_filepath     = "logs/changes.log"
-    visits_filepath      = "logs/visits.log"
-    suggestion_filepath  = "logs/suggestions.log"
+    search_filepath      = "assets/logs/searches.log"
+    changes_filepath     = "assets/logs/changes.log"
+    visits_filepath      = "assets/logs/visits.log"
+    suggestion_filepath  = "assets/logs/suggestions.log"
 
 	/* Discord API Webhook Endpoints */
 	search_api = "https://discordapp.com/api/webhooks/1199621453256081491/cwIygRnaTn9hK9fvdG44O_sNmBqHF-UaNx-al2nklXPFjY2cWjAdvLW0N-Z30OSvcJlE"
 	change_api = "https://discord.com/api/webhooks/1201347084591300639/xuHLzv6JjyMggubcTWXros2L4rjReG1KXQS-dhdGXMt4KbmDJimM6xOJ69dYNMYgWng-"
-
 )
 
 pub enum Log_T

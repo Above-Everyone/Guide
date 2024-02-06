@@ -44,7 +44,7 @@ pub fn (mut g Guide) find_by_name() []db.Item
 
 	for mut item in g.items 
 	{
-		if item.name == g.query { found << item }
+		if item.name == g.query || item.name.to_lower() == g.query { return [item] }
 
 		if g.query.split(" ").len > 1 {
 			if g.advanced_match_name(item.name) {

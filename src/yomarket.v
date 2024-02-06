@@ -18,8 +18,8 @@ pub struct Guide
 pub fn build_guide() Guide 
 {
 	mut g := Guide{}
-	db_v := os.read_lines("db/items.txt") or { [] }
-	profile_dir := os.ls("db/profiles/") or { [] }
+	db_v := os.read_lines("assets/db/items.txt") or { [] }
+	profile_dir := os.ls("assets/db/profiles/") or { [] }
 
 	if db_v == [] ||  profile_dir == [] {
 		println("[ X ] Error, Unable to load databases...!")
@@ -56,7 +56,7 @@ pub fn build_guide() Guide
 	for user in profile_dir 
 	{
 		if user.contains("example") { continue }
-		g.profiles << db.new_profile(os.read_file("db/profiles/${user}") or { "" })
+		g.profiles << db.new_profile(os.read_file("assets/db/profiles/${user}") or { "" })
 		c++
 	} 
 
@@ -67,10 +67,10 @@ pub fn build_guide() Guide
 
 pub fn (mut g Guide) save_db() 
 {
-	mut db_v := os.open_file("db/items.txt", "w") or { os.File{} }
-	for line in g.raw_items
+	mut db_v := os.open_file("assets/db/items.txt", "w") or { os.File{} }
+	for mut item in g.items
 	{
-		db_v.write("${line}\n".bytes()) or { 0 }
+		db_v.write("${item.to_db()}\n".bytes()) or { 0 }
 	}
 
 	db_v.close()
@@ -78,7 +78,7 @@ pub fn (mut g Guide) save_db()
 
 pub fn (mut g Guide) add_to_db(mut item db.Item) bool 
 {
-	mut db_v := os.open_file("db/items.txt", "a") or { return false }
+	mut db_v := os.open_file("assets/db/items.txt", "a") or { return false }
 	db_v.write("${item.to_db()}\n".bytes()) or { return false }
 
 	db_v.close()
