@@ -96,13 +96,22 @@ pub fn (mut i Item) add_extra_info(add_main_info bool) bool
 	}
 
 	json_data := (jsn.raw_decode(results.body) or { "" }).as_map()
-	response := (jsn.raw_decode("${json_data['response'] or {0}}") or { "" }).as_map()
+response := (jsn.raw_decode("${json_data['response'] or {0}}") or { "" }).as_map()
 
-	if add_main_info {
-		i.name = (response['item_name'] or { "" }).str()
-		item_id := "${i.id}"
-		i.url = "https://yw-web.yoworld.com/cdn/items/${item_id[0..2]}/${item_id[2..4]}/${item_id}/${item_id}_60_60.gif"
-	}
+if add_main_info {
+    i.name = (response['item_name'] or { "" }).str()
+    item_id := "${i.id}"
+    png_url := "https://yw-web.yoworld.com/cdn/items/${item_id[0..2]}/${item_id[2..4]}/${item_id}/${item_id}.png"
+    jpg_url := "https://yw-web.yoworld.com/cdn/items/${item_id[0..2]}/${item_id[2..4]}/${item_id}/${item_id}.jpg"
+
+    // Attempt to load .png first
+    i.url = png_url
+    if !file_exists(png_url) {
+        // If .png doesn't exist, load .jpg instead
+        i.url = jpg_url
+    }
+}
+
 
 	i.gender = (response['gender'] or { "" }).str()
     i.is_tradable = (response['is_tradable'] or { "" }).int()
