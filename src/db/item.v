@@ -67,7 +67,7 @@ pub fn new_item(arr []string) Item
 		id: arr[1].int(),
 		url: arr[2],
 		price: arr[3],
-		update: arr[4]
+		update: arr[4],
 		is_tradable: arr[5].int(),
 		is_giftable: arr[6].int(),
 		in_store: arr[7].bool(),
@@ -90,7 +90,8 @@ pub fn (mut i Item) add_extra_info(add_main_info bool) bool
 	results := http.post_form("https://yoworlddb.com/scripts/getItemInfo.php", {"iid": "${i.id}"}) or { http.Response{} }
 
     if results.body.starts_with("{") == false || results.body.ends_with("}") == false {
-        println("[ X ] (INVALID_JSON) Error, Unable to get item information....!\n\n{results}")
+        println("[ X ] (INVALID_JSON) Error, Unable to get item information....!\n\n${results}")
+
         return false
 	}
 
