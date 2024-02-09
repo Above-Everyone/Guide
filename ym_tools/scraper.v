@@ -29,6 +29,8 @@ fn main()
 {
 	mut s := start_scraper()
 	s.scrape()
+	// os.write_file("test.txt", "${s.items}".replace("['", "").replace("']", "").replace("', '", "\n")) or { println("Failed") 
+	// 	return }
 	s.merge_n_save()
 }
 
@@ -112,14 +114,14 @@ fn (mut s Scraper) merge_n_save()
 {
 	mut guide := src.build_guide()
 
-	for item in s.items
+	for mut item in s.items
 	{
 		guide.query = "${item.name}"
 		check := guide.find_by_name()
-		if check.results.len < 2 {
+		if check.len == 0 {
 			guide.items << item
 		} else {
-			println("${utils.signal_colored(false)} Page: ${s.c_page}/${s.max_pages}:${i} [${s.items.len}] | Invalid Item\n\t=> ${new_item.to_db()}")
+			println("${utils.signal_colored(false)} Page: ${s.c_page}/${s.max_pages}: [${s.items.len}] | Invalid Item\n\t=> ${item.to_db()}")
 		}
 	}
 

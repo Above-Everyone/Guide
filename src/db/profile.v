@@ -239,7 +239,6 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 			return true
 		}
 		.add_to_fs {
-			println("ITEM ADDED FS")
 			p.fs_list << FS{ posted_timestamp: current_time, fs_price: args[0], item: itm, seller_confirmation: args[1], buyer_confirmation: args[2] }
 			p.activites << new_activity(acti_t, mut itm, args[0], current_time, p.activites.len+1, args[1], args[2])
 			return true
@@ -266,7 +265,6 @@ pub fn (mut p Profile) edit_list(settings_t Settings_T, acti_t Activity_T, mut i
 
 		}
 		.rm_from_fs {
-			println("ITEM REMOVED FROM FS")
 			mut c := 0
 			for mut fs_item in p.fs_list 
 			{
@@ -308,7 +306,7 @@ pub fn (mut p Profile) save_profile() bool
 	mut data := "${p.p2db()}\n[@ACTIVITIES]\n{\n"
 
 	for mut activity in p.activites 
-	{ data += "${activity.activity2db()}\n" }
+	{ data += "${activity.activity2db()}\n".replace("${activityt2db(activity.act_t)}", "${activityt2str(activity.act_t)}") }
 
 	data += "}\n\n[@INVENTORY]\n{\n"
 
@@ -485,7 +483,8 @@ pub fn (mut p Profile) parse_fs(content string, line_n int) []FS
 								fs_price: fs_item_info[fs_item_info.len-4],
 								posted_timestamp: fs_item_info[fs_item_info.len-1],
 								buyer_confirmation: fs_item_info[fs_item_info.len-2],
-								seller_confirmation: fs_item_info[fs_item_info.len-3]
+								seller_confirmation: fs_item_info[fs_item_info.len-3],
+								seller: p.username
 			}
 			if fs_item_info[fs_item_info.len-2] != "false" && fs_item_info[fs_item_info.len-3] != "false" {
 				new_fs.confirmed_transaction = true

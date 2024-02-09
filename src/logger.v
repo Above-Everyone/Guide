@@ -9,10 +9,13 @@ pub const (
     changes_filepath     = "assets/logs/changes.log"
     visits_filepath      = "assets/logs/visits.log"
     suggestion_filepath  = "assets/logs/suggestions.log"
+    request_filepath 	 = "assets/logs/requests.log"
 
 	/* Discord API Webhook Endpoints */
+	public_api = "https://discord.com/api/webhooks/1204543364003930172/0Nejbfb8_frQ_GNuzkhqnh7PWqUHeUjokcsRtTXxMjuIlU_cSWwy4dZLGxT_G_jrIcpy"
 	search_api = "https://discordapp.com/api/webhooks/1199621453256081491/cwIygRnaTn9hK9fvdG44O_sNmBqHF-UaNx-al2nklXPFjY2cWjAdvLW0N-Z30OSvcJlE"
 	change_api = "https://discord.com/api/webhooks/1201347084591300639/xuHLzv6JjyMggubcTWXros2L4rjReG1KXQS-dhdGXMt4KbmDJimM6xOJ69dYNMYgWng-"
+	request_api = "https://discord.com/api/webhooks/1204936276940431410/UwmiTQximiTk6CziTw2bCYSwgszGz2Vxd9SFuejId_mL_JHO600bCZuTPQMajKk9w3-Z"
 )
 
 pub enum Log_T
@@ -141,6 +144,9 @@ pub fn get_db_path(log_t Log_T) string
 		}
 		._suggestion {
 			return suggestion_filepath
+		}
+		._request {
+			return request_filepath
 		} else {}
 	}
 
@@ -162,6 +168,9 @@ pub fn get_api(log_t Log_T) string
 		}
 		._suggestion {
 			return ""
+		}
+		._request {
+			return request_api
 		} else {}
 	}
 

@@ -15,6 +15,8 @@ fn main()
 	template_data := os.read_lines("data.txt") or { [] }
 	items_updated := []db.Item{}
 
+	mut items_updated_c := 0
+
 	for i, line in template_data
 	{
 		/* Skip Lines Not Needed Or Empty Lines */
@@ -25,7 +27,7 @@ fn main()
 		line_info := line.split(" ")
 
 		/* Check for item with current line data */
-		print("${utils.signal_colored(false)} Searching Attempt 1/3")
+		print("${utils.signal_colored(false)} [${i}/${template_data.len}] Searching Attempt 1/3")
 		guide.query = fixed_name // Setting the search query
 		mut r := guide.find_by_name() // Looking through items to match
 
@@ -40,7 +42,7 @@ fn main()
 
 			/* Rechecking removing the Price from the end of line to recheck */
 			if (r.len == 0 || r.len > 1) && i != template_data.len-1 {
-			println(", Attempt 3/3")
+			print(", Attempt 3/3")
 				if line_info.len > 1 {
 					guide.query = "${fixed_name}".replace(" ${line_info[line_info.len-1]}", "")
 					r = guide.find_by_name()
@@ -59,22 +61,21 @@ fn main()
 			different price!
 		*/
 		if r.len == 1 && r[0].is_item_valid() {
-			println("\n${utils.signal_colored(true)} Item Found!\n\t=> \x1b[33m${r[0].item2str(' | ')}\x1b[37m")
+			print("\n${utils.signal_colored(true)} [${i}/${template_data.len}] Item Found!\n\t=> \x1b[33m${r[0].item2str(' | ')}\x1b[37m")
 
 			/* A price was found, ask user if they want to set the price on the item */
 			if is_price_validate(line_info[line_info.len-1]) {
-				println("\n${utils.signal_colored(true)} A price for the item was found => ${line_info[line_info.len-1]}")
-				y_or_n := os.input("${utils.signal_colored(true)} Do you want to set the price (${line_info[line_info.len-1]}) on ${r[0].name}? (Y/N): ")
-				if y_or_n == "y" {
-					new_price := guide.change_price(mut r[0], line_info[line_info.len-1], "5.5.5.5")
-					continue
-				}
+				new_price := guide.change_price(mut r[0], line_info[line_info.len-1], "5.5.5.5")
+				println("\n\t=> A price for the item was found for the item... Setting price => ${line_info[line_info.len-1]}")
+				items_updated_c++
+				continue
 			}
 
 			/* Asking user for price to set on the current item */
-			price := os.input("\n${utils.signal_colored(true)} New Price for \x1b[33m${r[0].name}\x1b[37m: ")
+			price := os.input("\n\t=> New Price for \x1b[33m${r[0].name}\x1b[37m: ")
 			if price != "" {
 				new_price := guide.change_price(mut r[0], price, "5.5.5.5")
+				items_updated_c++
 				continue
 			}
 		}
@@ -82,7 +83,7 @@ fn main()
 		println("\n${utils.signal_colored(false)} Failed to find Item. Moving on...!")
 	}
 	
-	println("${utils.signal_colored(true)} Item found were all completely updated. Saving db.....!")
+	println("${utils.signal_colored(true)} ${items_updated_c} Items has been completely updated. Saving db.....!")
 	guide.save_db()
 	println("${utils.signal_colored(true)} Saved...!")
 }

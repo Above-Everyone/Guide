@@ -3,7 +3,7 @@ import os, sys
 from box_creator        import *
 from combine            import *
 
-if not os.path.exists("assets/generator//template_data.txt"):
+if not os.path.exists("assets/generator/template_data.txt"):
     print(f"[ X ] Error, Missing 'template_data.txt' to create templates!")
 
 def fix_data_2_combine(data: list[str]) -> list[str]:

@@ -151,7 +151,7 @@ pub fn (mut api API) template_creator() vweb.Result
 
 	mut check := false
 	lock api.guide
-	{ check = api.guide.generate_template(items, username) }
+	{ go api.guide.generate_template(items, username) }
 
 	if check  {
 		println("${utils.signal_colored(true)} Template Created | Template Creator\n\t=> ${items} | ${username}\n\t${ip}")
@@ -265,6 +265,7 @@ pub fn (mut api API) auth() vweb.Result
 			current_time := "${time.now()}".replace("-", "/").replace(" ", "-")
 			mut g := db.Item{}
 			api.guide.profiles[user.idx].activites << db.new_activity(db.Activity_T.logged_in, mut g, "", current_time, user.activites.len)
+			api.guide.profiles[user.idx].save_profile()
 		}
 		return api.text("${user.to_auth_str()}")
 	}
@@ -306,6 +307,18 @@ pub fn (mut api API) profile_creation() vweb.Result
 
 	println("${utils.signal_colored(false)} Invalid info | Profile creation attemp\n\t=> ${username} | ${yoworld_id} | ${extra_info}\n\tIP: ${ip}")
 	return api.text("[ X ] Invalid operation")
+}
+
+@['/profile/list_users']
+pub fn (mut api API) list_users() vweb.Result 
+{
+	mut list := ""
+
+	lock api.guide {
+		list = api.guide.list_all_users()
+	}
+
+	return api.text("${list}")
 }
 
 /*
@@ -431,4 +444,18 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 
 	println("${utils.signal_colored(false)} Invalid operation | Profile list removal edit\n\t=> ${username} | ${password} | ${item_id} | ${list}\n\tIP: ${ip}")
 	return api.text("[ X ] Invalid operation....!")
+}
+
+@['/profile/list_items_fs']
+pub fn (mut api API) list_items_fs() vweb.Result
+{
+	mut items := ""
+	lock api.guide {
+		mut fs_items := api.guide.get_latest_fs_actions()
+		for mut fs_item in fs_items { 
+			items += "${fs_item.item.item2profile()},${fs_item.seller},${fs_item.fs_price},${fs_item.seller_confirmation},${fs_item.buyer_confirmation},${fs_item.posted_timestamp}\n"
+		}
+	}
+
+	return api.text("${items}")
 }

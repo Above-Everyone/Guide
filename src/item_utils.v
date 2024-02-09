@@ -12,7 +12,7 @@ pub fn (mut g Guide) search(query string, get_extra_info bool) Response
 		mut find := g.find_by_id()
 
 		if find.name != "" {
-			if get_extra_info { find.add_extra_info(false) }
+			find.add_extra_info(true)
 			return Response{r_type: ResultType._exact, results: [find]}
 		}
 
@@ -95,16 +95,6 @@ pub fn (mut g Guide) advanced_match_name(item_name string) bool
 	mut word_c := 0
 	for word in words_in_search_name
 	{
-		// for search_word in words_in_item_name
-		// {
-		// 	if word == search_word { word_c++ }
-		// 	// if word == search_word /*|| word.starts_with(search_word) || word.ends_with(search_word)*/ { signal = true }
-		// }
-
-		// if word_c == query_word_count { 
-		// 	println("${word_c} ${query_word_count} ${signal} ${item_name_word_count}")
-		// 	return true
-		// }
 		if item_name.to_lower().contains(word) || item_name.to_lower().starts_with(word) || item_name.to_lower().ends_with(word) { word_c++ }
 
 		if word_c == query_word_count {

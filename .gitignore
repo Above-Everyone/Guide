@@ -1,7 +1,6 @@
 *.txt
 *.gp
+*.def
 *.html
 *.exe
-new_scrape.v
-scraper.exe
 *.log

@@ -134,7 +134,7 @@ pub fn (mut a Activity) activity2str() string
 pub fn (mut a Activity) activity2db() string
 {
 	c := activityt2db(a.act_t)
-	println("${a.act_t} ${c}")
+	
 	mut activity_str := "('${a.i_idx},'${c}','${a.timestamp}')"
 
 	if a.item.name != "" {
