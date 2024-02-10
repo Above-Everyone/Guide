@@ -44,7 +44,7 @@ pub fn (mut g Guide) edit_profile_list(mut profile db.Profile, settings_t db.Set
 		}
 	}
 
-	return p
+	return db.Profile{}
 }
 
 pub fn (mut g Guide) get_latest_fs_actions() []db.FS

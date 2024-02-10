@@ -266,6 +266,7 @@ pub fn (mut api API) auth() vweb.Result
 			mut g := db.Item{}
 			api.guide.profiles[user.idx].activites << db.new_activity(db.Activity_T.logged_in, mut g, "", current_time, user.activites.len)
 			api.guide.profiles[user.idx].save_profile()
+			println("${api.guide.profiles[user.idx]}")
 		}
 		return api.text("${user.to_auth_str()}")
 	}
@@ -343,7 +344,7 @@ pub fn (mut api API) edit_add_list() vweb.Result
 	lock api.guide { gd = api.guide }
 
 	mut profile := gd.find_profile(username)
-	mut edit_check := false
+	mut edit_check := db.Profile{}
 
 	if !(profile.username == username && profile.password == password)
 	{
@@ -358,6 +359,7 @@ pub fn (mut api API) edit_add_list() vweb.Result
 		println("${utils.signal_colored(false)} Invalid item ID | Profile list edit attempt\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
 		return api.text("[ X ] Invalid item ID....!")
 	}
+
 
 	match list 
 	{
@@ -375,8 +377,9 @@ pub fn (mut api API) edit_add_list() vweb.Result
     		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.add_to_invo, db.Activity_T.invo_posted, mut fs_item)
 		} else {}
 	}
+	println("${profile} | ${edit_check}")
 
-	if edit_check {
+	if edit_check.username != "" {
 		println("${utils.signal_colored(true)} Item Added | Profile list edit\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
 		return api.text("[ + ] Item added!")
 	}
@@ -406,7 +409,7 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 	lock api.guide { gd = api.guide }
 
 	mut profile := gd.find_profile(username)
-	mut edit_check := false
+	mut edit_check := db.Profile{}
 
 	if !(profile.username == username && profile.password == password)
 	{
@@ -423,6 +426,7 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 	}
 
 	
+	println("${profile}")
 
 	match list 
 	{
@@ -437,7 +441,9 @@ pub fn (mut api API) edit_rm_list() vweb.Result
 		} else {}
 	}
 
-	if edit_check {
+	println("${profile} | ${edit_check}")
+
+	if edit_check.username != "" {
 		println("${utils.signal_colored(true)} Item Removed | Profile list removal edit\n\t=> ${username} | ${password} | ${item_id} | ${list}\n\tIP: ${ip}")
 		return api.text("[ + ] Item added!")
 	}
