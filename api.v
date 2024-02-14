@@ -369,7 +369,7 @@ pub fn (mut api API) edit_add_list() vweb.Result
 		"wtb" {
 			if price == "" { 
 				println("${utils.signal_colored(false)} Invalid price | Profile list edit attempt\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
-				return api.text("[ X ] Error, Missing parameters....!") 
+				return api.text("[ X ] Error, Missing parameters....!")
 			}
     		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.add_to_wtb, db.Activity_T.wtb_posted, mut fs_item, price, "false", "false")
 		}
@@ -377,7 +377,10 @@ pub fn (mut api API) edit_add_list() vweb.Result
     		edit_check = gd.edit_profile_list(mut profile, db.Settings_T.add_to_invo, db.Activity_T.invo_posted, mut fs_item)
 		} else {}
 	}
-	println("${profile} | ${edit_check}")
+
+	lock api.guide {
+		api.guide = gd
+	}
 
 	if edit_check.username != "" {
 		println("${utils.signal_colored(true)} Item Added | Profile list edit\n\t=> ${username} | ${password} | ${item_id} | ${price} | ${list}\n\tIP: ${ip}")
